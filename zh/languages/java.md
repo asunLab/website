@@ -1,88 +1,60 @@
-# Java 指南
+# Java / Kotlin 指南
 
-Java ASON 库通过反射和注解处理，提供 Java 开发者熟悉的类 JSON API。
+JVM 版以 Java 为主，同时在同一个 artifact 中附带 Kotlin helper。
 
-## 安装
+## 最低版本
 
-### Gradle
+- Java `21+`
+- Kotlin 使用者如果要用 helper 层，建议使用 `1.9+` 工具链
 
-```groovy
-// build.gradle
-dependencies {
-    implementation 'io.ason:ason:0.1.0'
-}
-```
+## 实现方式
 
-### Maven
+- Java 侧基于反射、注解和缓存后的类元数据。
+- 文本与二进制解码都依赖目标 `Class<T>`。
+- Kotlin 在相同运行时之上额外提供 inline reified helper。
 
-```xml
-<dependency>
-    <groupId>io.ason</groupId>
-    <artifactId>ason</artifactId>
-    <version>0.1.0</version>
-</dependency>
-```
+## 当前支持
 
-## 编码与解码
+- 紧凑文本编解码
+- 美化文本编解码
+- 二进制编解码
+- 列表、嵌套类、可空字段、entry-list 键值集合
 
-```java
-import io.ason.Ason;
-import io.ason.AsonField;
-import java.util.List;
+ASON 不再提供独立 `map` 类型。键值集合请统一建模为 `List<Entry>`。
 
-public class Main {
-    public static class User {
-        @AsonField("id")     public long    id;
-        @AsonField("name")   public String  name;
-        @AsonField("active") public boolean active;
-
-        public User(long id, String name, boolean active) {
-            this.id = id; this.name = name; this.active = active;
-        }
-    }
-
-    public static void main(String[] args) throws Exception {
-        List<User> users = List.of(
-            new User(1, "Alice", true),
-            new User(2, "Bob",   false)
-        );
-
-        // 序列化
-        String text = Ason.encodeList(users, User.class);
-        System.out.println(text);
-        // {id@int,name@str,active@bool}:
-        //   (1,Alice,true),
-        //   (2,Bob,false)
-
-        // 反序列化
-        List<User> restored = Ason.decodeList(text, User.class);
-    }
-}
-```
-
-## 二进制格式
+## 核心 API
 
 ```java
-byte[] bytes = Ason.encodeBinary(user);
-User restored = Ason.decodeBinary(bytes, User.class);
+String text = Ason.encode(user);
+String typed = Ason.encodeTyped(user);
+String pretty = Ason.encodePrettyTyped(user);
 
-byte[] binList = Ason.encodeBinary(users);
-List<User> restored2 = Ason.decodeBinaryList(binList, User.class);
+User restored = Ason.decode(text, User.class);
+List<User> rows = Ason.decodeList(text, User.class);
+
+byte[] bin = Ason.encodeBinary(user);
+User restored2 = Ason.decodeBinary(bin, User.class);
 ```
 
-## 字段注解
+## Kotlin Helper
 
-| 注解 | 说明 |
-|------|------|
-| `@AsonField("name")` | 覆盖 ASON Schema 中的字段名 |
-| `@AsonIgnore` | 排除该字段，不参与编解码 |
-| `@AsonType("int")` | 覆盖输出中的类型注解 |
+```kotlin
+val user: User = decode(text)
+val rows: List<User> = decodeList(text)
+```
 
-## 构建
+## 说明
+
+- Java / Kotlin 对外暴露的 ASON schema 名同样只有 `int`、`float`、`str`、`bool`。
+- 二进制解码依赖目标类，因为 binary ASON 不内嵌 schema。
+- 如果要表达键值集合，请使用 entry object 列表，而不是 `Map<K, V>`。
+
+## 构建与测试
 
 ```bash
 cd ason-java
-./gradlew build
 ./gradlew test
-./gradlew run
+./gradlew runBasicExample
+./gradlew runComplexExample
+./gradlew runBenchExample
 ```

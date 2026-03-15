@@ -1,129 +1,186 @@
-# ASON 格式规范 v1.0
+# ASON 格式规范
 
-> **ASON** = Array-Schema Object Notation（数组模式对象符号）  
-> _"The efficiency of arrays, the structure of objects."_
+本页是网站版的当前 ASON 简明规范，与本仓库中的实现保持一致。
 
-ASON 是一种专为大规模数据传输与 LLM 交互设计的序列化格式。本页为规范性文档，所有语言实现必须遵守此处定义的规则。
+如果你需要更完整的边界规则和更多示例，请继续阅读：
 
-## 1. 设计原则
+- [语法参考](/zh/reference/syntax)
+- [数据类型](/zh/reference/data-types)
+- [Schema 与数据](/zh/guide/schema-and-data)
 
-- **Schema 与数据分离** —— 结构只声明一次，数据行中不重复
-- **行导向（Row-Oriented）** —— 多条记录以连续元组形式出现在单一 Schema Header 之后
-- **方圆结合（Structural Harmony）** —— `{}` 定义骨架（Schema），`()` 承载数据（values）
-- **Token 极致优化** —— 最少语法字符，比等价 JSON 少 30–70% Token
-- **极致解析性能** —— 零哈希匹配、模式驱动解析、内存占用极小
+## 核心形态
 
-## 2. 形式化语法
+ASON 把 **Schema** 与 **数据** 分开写。
 
-```abnf
-document    = schema ":" SP data
-schema      = "{" field-list "}"
-field-list  = field *("," SP field)
-field       = name ["@" type]
-name        = 1*(ALPHA / DIGIT / "_")
-type        = primitive / schema / "[" type "]"
-primitive   = "int" / "float" / "str" / "bool"
-
-data        = tuple / tuple-list
-tuple-list  = tuple *("," NL SP tuple)
-tuple       = "(" value-list ")"
-value-list  = value *("," value)
-value       = scalar / tuple / array / ""
-array       = "[" [value-list] "]"
-
-scalar      = integer / float / boolean / quoted-str / unquoted-str
-integer     = ["-"] 1*DIGIT
-float       = ["-"] 1*DIGIT "." 1*DIGIT [("e"/"E") ["+"/"-"] 1*DIGIT]
-boolean     = "true" / "false"
-quoted-str  = DQUOTE *char DQUOTE
-unquoted-str = 1*safe-char
-safe-char   = 任意 Unicode，除 "," / "(" / ")" / "[" / "]" / "\"
-```
-
-## 3. 数据类型
-
-### 3.1 整数
-`i64` 范围（`-9223372036854775808` 到 `9223372036854775807`）内的任意值。十进制表示，可有前置 `-`，禁止前置零。
-
-### 3.2 浮点数
-IEEE 754 双精度。格式为 `[-]digits.digits`，可有 `e` / `E` 指数。`NaN` 和 `Inf` 不可在 ASON Text 中表示（改用空槽）。
-
-### 3.3 布尔值
-严格为 `true` 或 `false`，区分大小写，仅小写。
-
-### 3.4 Null / None
-空槽 —— 两个逗号之间或最后一个逗号与右括号 `)` 之间没有任何字符。所有实现必须将其映射到各语言原生的 null / option / 指针类型。
-
-### 3.5 不带引号的字符串
-不包含 `,`、`(`、`)`、`[`、`]`、`\` 的 Unicode 码点序列。解析器**去除**首尾 ASCII 空白（空格、制表符）。
-
-### 3.6 带引号的字符串
-用双引号 `"` 包裹的字符序列，支持转义序列：
-
-| 转义 | Unicode |
-|------|---------|
-| `\\` | U+005C |
-| `\"` | U+0022 |
-| `\n` | U+000A |
-| `\t` | U+0009 |
-| `\r` | U+000D |
-| `\,` | U+002C（仅限不带引号的上下文） |
-
-### 3.7 数组
-`[` `]` 内的逗号分隔值，可以为空（`[]`）。元素遵循相同的 `value` 规则。
-
-### 3.8 嵌套结构体
-嵌套结构体 Schema 内联出现在父 Schema 中：
+单个值：
 
 ```ason
-{id@int, address@{city@str, zip@str}}
+{id@int, name@str, active@bool}:(1, Alice, true)
 ```
 
-对应内层元组作为数据：
-
-```ason
-(1, (Berlin, 10115))
-```
-
-## 4. 规范化形式
-
-合规工具生成的 ASON 文档**应当**：
-
-1. 在 Schema 中包含类型注解（`{id@int, name@str}`）
-2. 每个元组独占一行，缩进两个空格
-3. `:` 之后换行，首个数据元组缩进出现
+多行列表：
 
 ```ason
 [{id@int, name@str, active@bool}]:
   (1, Alice, true),
-  (2, Bob,   false)
+  (2, Bob, false)
 ```
 
-非规范形式的空白对解析有效。
+Schema 只写一次，`:` 后面的元组按 Schema 顺序取值。
 
-## 5. 单结构体简写
+## Schema 规则
 
-仅含一个元组的文档**可以**省略换行：
+字段定义只有两种基本形态：
+
+```text
+name
+name@type
+```
+
+当前唯一支持的标量 Schema 类型名只有：
+
+- `int`
+- `float`
+- `str`
+- `bool`
+
+结构型写法同样用 `@` 引出：
+
+- `@{...}` 嵌套结构体
+- `@[type]` 数组
+- `@[{...}]` 对象数组
+
+例如：
 
 ```ason
-{id@int, name@str}:(1, Alice)
+{profile@{id@int, name@str}}
+{tags@[str]}
+{attrs@[{key@str, value@str}]}
 ```
 
-## 6. 二进制格式（ASON-BIN）
+当前 ASON **没有**独立 map 类型。键值集合应写成条目列表，例如 `[{key@str, value@str}]`。
 
-ASON-BIN 是独立的编码，不使用文本 Schema 语法。字段按声明顺序紧密排列，无填充。所有整数**小端序**。
+## 字段名
 
-完整线格式编码表见[二进制格式指南](/zh/guide/binary-format)。
+简单字段名可以不加引号：
 
-## 7. 版本管理
+```ason
+{id, name, active}
+```
 
-本文档描述 **ASON v1.0**。未来版本：向后兼容的新增功能递增次版本号，破坏性变更递增主版本号。
+如果字段名：
 
-## 8. 合规要求
+- 含空格
+- 以数字开头
+- 含 `{ } [ ] @ "` 等语法字符
 
-合规实现**必须**：
+就必须加引号：
 
-1. 无错误地解析本规范中的所有示例
-2. 生成可被任何其他合规实现解析的输出
-3. 通过跨语言兼容性测试套件（`*/tests/cross_compat_test.*`）
-4. 在文本编解码往返中保留所有非 null 标量值
+```ason
+{"id uuid"@int, "65"@bool, "{}[]@\""@str}
+```
+
+## 数据规则
+
+数据是位置型的，不按 key 匹配。第一个值对应第一个字段，第二个值对应第二个字段，依此类推。
+
+嵌套结构体的数据写成嵌套元组：
+
+```ason
+{user@{id@int, name@str}}:((1, Alice))
+```
+
+当前格式不支持在数据区写对象字面量。
+
+## 标量值
+
+### `int`
+
+```ason
+42
+-7
+0
+```
+
+### `float`
+
+```ason
+3.14
+-0.5
+1e10
+```
+
+### `bool`
+
+```ason
+true
+false
+```
+
+### null / optional
+
+空槽表示 null / 缺失：
+
+```ason
+{id@int, label@str}:(1, )
+```
+
+## 字符串
+
+ASON 有两种字符串形式。
+
+不带引号字符串：
+
+- 适合简单值
+- 首尾空白会被 trim
+- 不应包含保留语法字符
+
+带引号字符串：
+
+- 保留空白
+- 可包含保留字符
+- 支持 `\"`、`\\`、`\n`、`\t`、`\r` 等转义
+
+例如：
+
+```ason
+Alice
+"Alice Smith"
+"  padded  "
+"value with, comma"
+```
+
+在 Schema 中，`@` 是结构语法；在数据中，`@` 只是普通内容。为避免歧义，值里出现 `@` 时应加引号：
+
+```ason
+{name@str}:("@Alice")
+```
+
+## 注释
+
+ASON 支持块注释：
+
+```ason
+/* user list */
+[{id@int, name@str}]:
+  (1, Alice),
+  (2, Bob)
+```
+
+行注释不是格式的一部分。
+
+## 二进制说明
+
+ASON-BIN 不像文本 ASON 那样天然自描述。实际使用中，二进制解码通常需要外部 schema、目标类型或两端一致的字段布局。
+
+适合文本 ASON 的场景：
+
+- 需要人工可读
+- 需要跨语言交换
+- 需要 payload 自带 schema
+
+适合 ASON-BIN 的场景：
+
+- 机器内部传输
+- 更紧凑的机器表示
+- 双方实现已经明确对齐

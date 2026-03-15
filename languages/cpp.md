@@ -1,81 +1,67 @@
 # C++ Guide
 
-The C++ ASON library builds on the C core and adds template-based type-safe wrappers, RAII resource management, and optional STL integration.
+The C++ implementation is header-only and builds on compile-time metadata macros rather than runtime reflection.
 
-## Installation
+## Minimum Version
 
-```cmake
-# CMakeLists.txt
-add_subdirectory(path/to/ason/cpp)
-target_link_libraries(your_target ason_cpp)
-```
+- C++17
 
-Requires C++17 or later.
+## Implementation Model
 
-## API Overview
+- Types declare schema metadata with `ASON_FIELDS(...)` and `ASON_TYPES(...)`.
+- Text and binary decode both use the target type `T`.
+- There is no standalone ASON `map` type. Use entry structs plus `std::vector`.
+
+## Current Support
+
+- Compact text encode/decode
+- Pretty text encode/decode
+- Binary encode/decode
+- `std::optional`, `std::vector`, nested structs, struct arrays
+
+Binary decode is not self-describing. You decode into a target type such as `decode_bin<T>(...)`.
+
+## Core API
 
 ```cpp
 #include "ason.hpp"
 
-// Encoding
-std::string ason::encode(const T &value);
-std::string ason::encode_vec(const std::vector<T> &values);
+std::string encode(const T &value);
+std::string encode_typed(const T &value);
+std::string encode_pretty(const T &value);
+std::string encode_pretty_typed(const T &value);
 
-// Decoding
-T              ason::decode<T>(std::string_view text);
-std::vector<T> ason::decode_vec<T>(std::string_view text);
+T decode<T>(std::string_view text);
+std::vector<T> decode_vec<T>(std::string_view text);
 
-// Binary
-std::vector<uint8_t> ason::encode_bin(const T &value);
-T                    ason::decode_bin<T>(std::span<const uint8_t> data);
+std::vector<uint8_t> encode_bin(const T &value);
+T decode_bin<T>(std::span<const uint8_t> data);
 ```
 
 ## Example
 
 ```cpp
-#include <iostream>
-#include <vector>
-#include "ason.hpp"
-
 struct User {
-    int64_t     id;
+    int64_t id;
     std::string name;
-    bool        active;
+    bool active;
 
-    ASON_FIELDS(id, name, active)          // macro generates schema metadata
+    ASON_FIELDS(id, name, active)
     ASON_TYPES("int", "str", "bool")
 };
-
-int main() {
-    std::vector<User> users = {
-        {1, "Alice", true},
-        {2, "Bob",   false},
-    };
-
-    std::string s = ason::encode_vec(users);
-    std::cout << s << "\n";
-
-    auto restored = ason::decode_vec<User>(s);
-    // restored == users
-
-    // Binary round-trip
-    auto bytes    = ason::encode_bin_vec(users);
-    auto restored2 = ason::decode_bin_vec<User>(bytes);
-}
 ```
 
-## Building Examples
+## Notes
+
+- The public schema surface still only uses `int`, `float`, `str`, and `bool`.
+- C++ metadata macros are the bridge between host types and common ASON wire format.
+- For keyed data, use an entry type such as `struct Attr { std::string key; int64_t value; };`.
+
+## Build and Test
 
 ```bash
 cd ason-cpp
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
-./build/examples/basic
-./build/examples/bench
-```
-
-## Running Tests
-
-```bash
-cd ason-cpp/build && ctest --output-on-failure
+ctest --test-dir build --output-on-failure
 ```

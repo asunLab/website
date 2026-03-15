@@ -1,49 +1,16 @@
 # Syntax Reference
 
-Complete reference for the ASON text format.
+Complete reference for the current ASON text syntax.
 
-## Document Structure
+## Document Shapes
 
-Every document has this shape:
-
-```text
-schema ":" data
-```
-
-- `schema` uses `{...}`
-- `data` uses tuples `(...)`
-- a list uses one schema with multiple tuples
-
-## Schema
+Single row:
 
 ```ason
-{id, name, active}
-{id@int, name@str, active@bool}
+{id@int, name@str}:(1, Alice)
 ```
 
-Type annotations are optional in text mode.
-
-### Common Type Annotations
-
-| Annotation | Meaning |
-|-----------|---------|
-| `int` | Integer |
-| `float` | Floating-point number |
-| `str` | String |
-| `bool` | Boolean |
-| `{...}` | Nested struct |
-| `[type]` | Array |
-| `[{...}]` | Array of structs |
-
-## Tuples
-
-```ason
-(1, Alice, true)
-```
-
-Values follow schema order.
-
-Lists use one schema and many tuples:
+Multiple rows:
 
 ```ason
 [{id@int, name@str}]:
@@ -51,9 +18,75 @@ Lists use one schema and many tuples:
   (2, Bob)
 ```
 
-## Scalar Values
+The schema appears before `:`. Data appears after `:` as one or more tuples.
 
-### Integer
+## Schema
+
+### Field syntax
+
+```ason
+{id, name, active}
+{id@int, name@str, active@bool}
+```
+
+In text ASON, scalar type annotations are optional. When present, the only scalar names are:
+
+- `int`
+- `float`
+- `str`
+- `bool`
+
+Structured annotations use the same `@` marker:
+
+- `@{...}` nested struct
+- `@[type]` array
+- `@[{...}]` array of structs
+
+Examples:
+
+```ason
+{profile@{id@int, name@str}}
+{tags@[str]}
+{attrs@[{key@str, value@str}]}
+```
+
+### Field names
+
+Simple names may be unquoted:
+
+```ason
+{id, name, active}
+```
+
+Quoted field names are required when a field name:
+
+- contains spaces
+- starts with digits
+- contains syntax characters such as `{ } [ ] @ "`
+
+```ason
+{"id uuid"@int, "65"@bool, "{}[]@\""@str}
+```
+
+## Data
+
+Data is positional. Values follow schema order.
+
+```ason
+{id@int, name@str, active@bool}:(1, Alice, true)
+```
+
+For nested structs, data is written as nested tuples:
+
+```ason
+{user@{id@int, name@str}}:((1, Alice))
+```
+
+Inline object literals are not part of the current format.
+
+## Scalars
+
+### `int`
 
 ```ason
 42
@@ -61,38 +94,51 @@ Lists use one schema and many tuples:
 0
 ```
 
-### Float
+### `float`
 
 ```ason
 3.14
 -0.5
+1e10
 ```
 
-### Boolean
+### `bool`
 
 ```ason
 true
 false
 ```
 
-### Null / Optional
+### null / optional
 
 An empty slot means null / absent:
 
 ```ason
-[{id@int, label@str}]:
-  (1, hello),
-  (2,      )
+{id@int, label@str}:(1, )
 ```
 
-### Strings
+## Strings
 
-Unquoted strings are allowed when they do not contain reserved syntax characters:
+### Unquoted strings
+
+Unquoted strings are allowed for simple values:
 
 ```ason
 Alice
 hello world
 ```
+
+Rules:
+
+- outer whitespace is trimmed
+- reserved syntax characters should be quoted instead
+- if a value contains `@`, quote it to avoid confusion with schema syntax
+
+```ason
+{name@str}:("@Alice")
+```
+
+### Quoted strings
 
 Use quotes when you need to preserve whitespace or include reserved characters:
 
@@ -102,13 +148,7 @@ Use quotes when you need to preserve whitespace or include reserved characters:
 "line\nbreak"
 ```
 
-## Nested Structs
-
-```ason
-[{name@str, dept@{title@str}}]:
-  (Alice, (Engineering)),
-  (Bob,   (Platform))
-```
+Supported escapes include `\"`, `\\`, `\n`, `\t`, and `\r`.
 
 ## Arrays
 
@@ -118,7 +158,16 @@ Use quotes when you need to preserve whitespace or include reserved characters:
   (Bob,   [76, 88])
 ```
 
-## Keyed Entry Lists
+Nested arrays are also allowed:
+
+```ason
+[{matrix@[[int]]}]:
+  ([[1, 2], [3, 4]])
+```
+
+## Entry Lists
+
+ASON no longer has a standalone map type. Model key-value collections as entry lists:
 
 ```ason
 [{name@str, attrs@[{key@str, value@int}]}]:
@@ -130,7 +179,7 @@ Use quotes when you need to preserve whitespace or include reserved characters:
 ASON supports block comments:
 
 ```ason
-/* schema for a user list */
+/* user list */
 [{id@int, name@str}]:
   (1, Alice),
   (2, Bob)
@@ -138,16 +187,8 @@ ASON supports block comments:
 
 Line comments are not part of the format.
 
-## Single-Value Form
-
-A single value can be written on one line:
-
-```ason
-{id@int, name@str, active@bool}:(1, Alice, true)
-```
-
 ## Whitespace
 
-- whitespace between tokens is ignored
-- unquoted strings are trimmed
-- pretty multi-line layout is optional but recommended
+- whitespace between structural tokens is ignored
+- unquoted strings are trimmed at the outer edges
+- pretty multi-line layout is recommended but not required

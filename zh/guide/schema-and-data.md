@@ -1,26 +1,28 @@
 # Schema 与数据
 
-ASON 最重要的概念是 **Schema（结构）** 与 **数据（值）** 的分离。
+ASON 最重要的思想是：**Schema** 只描述一次结构，**数据** 只负责按顺序给值。
 
-## Schema 语法
+## 分离方式
 
-Schema 以 `{` 和 `}` 包裹，内含逗号分隔的字段定义：
-
-```ason
-{name, age, active}
-```
-
-字段可选地包含类型注解：
+Schema：
 
 ```ason
 {name@str, age@int, active@bool}
 ```
 
-类型注解是为人类和工具提供的可选提示 —— 当目标类型已由宿主语言类型系统确定时，它们不影响解析行为。
+数据：
 
-## 数据语法
+```ason
+(Alice, 30, true)
+```
 
-对于切片（结构体列表），需要将 Schema 用 `[` `]` 包裹：
+合起来：
+
+```ason
+{name@str, age@int, active@bool}:(Alice, 30, true)
+```
+
+如果是列表，Schema 写一次，后面跟多条元组：
 
 ```ason
 [{name@str, age@int}]:
@@ -28,61 +30,98 @@ Schema 以 `{` 和 `}` 包裹，内含逗号分隔的字段定义：
   (Bob,   25)
 ```
 
-对于单个结构体（非列表），Schema 和数据可以写在同一行：
+## Schema 规则
 
-```ason
-{name, age}:(Alice, 30)
+每个字段的基本形式是：
+
+```text
+name
+name@type
 ```
 
-## 嵌套 Schema
+当前允许的标量 Schema 类型只有：
 
-Schema 可以嵌套，表示嵌套对象：
+- `int`
+- `float`
+- `str`
+- `bool`
 
-```ason
-[{id@int, address@{city@str, zip@str}}]:
-  (1, (Berlin, 10115)),
-  (2, (Paris,  75001))
-```
+结构型写法通过 `@` 加结构表达：
 
-内层 Schema `{city@str, zip@str}` 对应内层元组 `(Berlin, 10115)`。
+- `@{...}` 嵌套结构体
+- `@[type]` 数组
+- `@[{...}]` 对象数组
 
-## 数组字段
-
-包含列表的字段使用 `[type]` 记法：
-
-```ason
-[{id@int, tags@[str]}]:
-  (1, [rust, go]),
-  (2, [python, c++])
-```
-
-## 可选值 / Null
-
-两个逗号之间的空槽（什么都没有）表示 `null` / `None`：
+例如：
 
 ```ason
-[{id@int, name@str, score@float}]:
-  (1, Alice, 9.5),
-  (2, Bob,       )
+{profile@{id@int, name@str}}
+{tags@[str]}
+{attrs@[{key@str, value@str}]}
 ```
 
-`Bob` 的 score 是 `None`（末尾空槽）。
+## 字段名
+
+简单字段名可以直接写：
+
+```ason
+{id, name, active}
+```
+
+如果字段名包含空格、以数字开头、或包含语法字符，就必须加引号：
+
+```ason
+{"id uuid"@int, "65"@bool, "{}[]@\""@str}
+```
+
+## 数据规则
+
+数据是位置型的，不是按 key 匹配。第一个值对应第一个字段，第二个值对应第二个字段，依此类推。
+
+嵌套结构体的数据写成嵌套元组：
+
+```ason
+{address@{city@str, zip@str}}:((Berlin, 10115))
+```
+
+数组使用方括号：
+
+```ason
+{tags@[str]}:([rust, go, zig])
+```
+
+空槽表示 null / 缺失：
+
+```ason
+{id@int, score@float}:(1, )
+```
+
+## ASON 当前不做什么
+
+当前 ASON 文本格式**不支持**在数据区使用内联对象字面量：
+
+```ason
+{user@{id@int}}:({id: 1})   // 不是当前 ASON
+```
+
+也**没有**独立 map 语法。键值集合应建模为条目列表：
+
+```ason
+{attrs@[{key@str, value@str}]}:([(lang, zig), (tier, prod)])
+```
 
 ## 语法概要
 
-```
-document    = single | slice
-single      = schema ":" tuple
-slice       = "[" schema "]" ":" rows
-schema      = "{" fields "}"
-fields      = field ("," field)*
-field       = name (":" type)?
-type        = "int" | "float" | "str" | "bool" | schema | "[" type "]"
-rows        = tuple ("," tuple)*
-tuple       = "(" values ")"
-values      = value ("," value)*
-value       = scalar | tuple | "[" values "]" | ""
-scalar      = unquoted_string | quoted_string | number | bool | null
+```text
+single   = schema ":" tuple
+slice    = "[" schema "]" ":" rows
+schema   = "{" fields "}"
+field    = name ["@" type]
+type     = "int" | "float" | "str" | "bool" | schema | "[" type "]"
+rows     = tuple ("," tuple)*
+tuple    = "(" values ")"
+values   = value ("," value)*
+value    = scalar | tuple | "[" values "]" | ""
 ```
 
-查看完整 [语法参考](/zh/reference/syntax) 了解转义规则、空白处理和边界情况。
+完整的字符串、转义、空白与注释规则见 [语法参考](/zh/reference/syntax)。

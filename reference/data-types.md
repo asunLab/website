@@ -1,16 +1,21 @@
 # Data Types
 
-ASON supports a rich set of scalar and composite types. This page documents their text-format representation and cross-language equivalents.
+Current ASON schema names are intentionally small and fixed. The only scalar schema names are:
+
+- `int`
+- `float`
+- `str`
+- `bool`
 
 ## Scalar Types
 
 | ASON type | Example | Notes |
 |-----------|---------|-------|
 | `int` | `42`, `-100`, `0` | Any `i64`-range integer |
-| `float` | `3.14`, `-0.5`, `1e10` | IEEE 754 double |
+| `float` | `3.14`, `-0.5`, `1e10` | Floating-point text form |
 | `bool` | `true`, `false` | Lowercase only |
-| `str` (unquoted) | `Alice Smith` | Auto-trimmed, `\,` to escape comma |
-| `str` (quoted) | `" spaces "` | Preserves whitespace, supports `\"` `\n` `\t` |
+| `str` (unquoted) | `Alice Smith` | Outer whitespace is trimmed |
+| `str` (quoted) | `" spaces "` | Preserves whitespace and supports escapes |
 | null / None | _(empty slot)_ | Empty between commas |
 
 ## Composite Types
@@ -18,21 +23,16 @@ ASON supports a rich set of scalar and composite types. This page documents thei
 ### Nested Struct
 
 ```ason
-// Schema
-{id@int, address@{city@str, zip@str}}
-
-// Data
-(1, (Berlin, 10115))
+{id@int, address@{city@str, zip@str}}:(
+  1,
+  (Berlin, 10115)
+)
 ```
 
 ### Array / List
 
 ```ason
-// Schema
-{id@int, tags@[str]}
-
-// Data
-(1, [rust, go, wasm])
+{id@int, tags@[str]}:(1, [rust, go, wasm])
 ```
 
 Arrays can be nested:
@@ -43,19 +43,17 @@ Arrays can be nested:
   ([[5, 6], [7, 8]])
 ```
 
-### Enum
+### Entry List
+
+ASON does not use a dedicated map type. Use an array of entry structs:
 
 ```ason
-Role::Admin
-Status::Active
-Color::Rgb
+{attrs@[{key@str, value@int}]}:([(age, 30), (score, 95)])
 ```
-
-Enum variants are namespaced with `::`.
 
 ### Option / Nullable
 
-An empty slot (nothing between commas) represents `None` / `null`:
+An empty slot means `null` / `None`:
 
 ```ason
 [{id@int, score@float}]:
@@ -65,25 +63,52 @@ An empty slot (nothing between commas) represents `None` / `null`:
 
 ## Cross-Language Type Mapping
 
-| ASON type | Rust | Go | Python | Java | C |
-|-----------|------|----|--------|------|---|
-| `int` | `i64` | `int64` | `int` | `long` | `int64_t` |
-| `float` | `f64` | `float64` | `float` | `double` | `double` |
-| `bool` | `bool` | `bool` | `bool` | `boolean` | `bool` |
-| `str` | `String` / `&str` | `string` | `str` | `String` | `char*` |
-| null | `Option<T>` | pointer / `*T` | `Optional` | `Optional<T>` | nullable ptr |
-| `[T]` | `Vec<T>` | `[]T` | `list` | `List<T>` | `T[]` |
-| nested struct | struct | struct | dataclass | class | struct |
+| ASON type | Rust | Go | Python | Java / Kotlin | C | C++ | Zig | C# | Dart | JS / TS | PHP |
+|-----------|------|----|--------|---------------|---|-----|-----|----|------|---------|-----|
+| `int` | `i64` | `int64` | `int` | `long` / `Long` | `int64_t` | `int64_t` | `i64` | `long` | `int` | `number` (integer) | `int` |
+| `float` | `f64` | `float64` | `float` | `double` / `Double` | `double` | `double` | `f64` | `double` | `double` | `number` | `float` |
+| `bool` | `bool` | `bool` | `bool` | `boolean` / `Boolean` | `bool` | `bool` | `bool` | `bool` | `bool` | `boolean` | `bool` |
+| `str` | `String` / `&str` | `string` | `str` | `String` | `char*` / buffer field | `std::string` | `[]const u8` | `string` | `String` | `string` | `string` |
+| null / empty slot | `Option<T>` | `nil` / pointer / empty slot | `None` | nullable field / empty slot | nullable pointer / empty slot | `std::optional<T>` / empty slot | `?T` | nullable reference / nullable value | `null` | `null` / `undefined` | `null` |
+| `[T]` | `Vec<T>` | `[]T` | `list` | `List<T>` | array / repeated rows with schema | `std::vector<T>` | `[]T` | `List<T>` / array | `List<T>` | `T[]` | indexed array |
+| nested struct | `struct` | `struct` | `dict` / object factory result | class / data class | `struct` + schema descriptor | `struct` + metadata macros | `struct` | class / record implementing schema interface | class implementing `AsonSchema` | plain object | associative array / object-like array |
 
-## Integer Sizes (ASON-BIN)
+### Notes
 
-In the binary format, integers use their native sizes:
+- ASON schema names stay the same in every language: only `int`, `float`, `bool`, `str`.
+- A host language may use a different concrete type name for the same ASON scalar. For example, Java uses `double` for `float`, and Zig commonly maps `str` to `[]const u8`.
+- JS / TS only has one numeric runtime type, so `int` means “a number that is encoded as an integer”.
+- ASON no longer has a standalone `map` type. Use entry lists such as `[{key@str,value@str}]`.
 
-| Type | Bytes |
-|------|-------|
-| `i8` / `u8` | 1 |
-| `i16` / `u16` | 2 |
-| `i32` / `u32` | 4 |
-| `i64` / `u64` | 8 |
+## Language Support Overview
 
-All integers are **little-endian** in ASON-BIN.
+| Language | Minimum version | Implementation style | Text decode expects | Binary decode expects |
+|----------|------------------|----------------------|---------------------|-----------------------|
+| Rust | Rust `1.85+` | `serde`-based generic codec | target type `T` | target type `T` |
+| Go | Go `1.24+` | reflection + struct tags | output pointer | output pointer |
+| Python | Python `3.8+` | compiled C++ extension over Python dict/list values | self-describing text, returns Python objects | explicit schema string |
+| Java / Kotlin | Java `21+`, Kotlin helper layer on `1.9+` toolchain | reflection + annotations + class metadata | target `Class<T>` or Kotlin reified helper | target `Class<T>` / Kotlin reified helper |
+| C | C11 | explicit schema descriptors / macros | schema descriptor + output buffer | schema descriptor + output buffer |
+| C++ | C++17 | template metadata macros (`ASON_FIELDS`, `ASON_TYPES`) | target type `T` | target type `T` |
+| Zig | Zig `0.15.2+` | comptime type introspection | target type `T` + allocator | target type `T` + allocator |
+| C# | `.NET 8+` (`net8.0`, `net10.0`) | `IAsonSchema` + factory-based typed decode | field bag or factory function | field names + field types + factory |
+| Dart | Dart `3.0+` | `AsonSchema` interface + factory-based typed decode | field bag or factory function | field names + field types + factory |
+| JS / TS | ES2020-capable runtime | runtime object inspection | self-describing text, returns plain objects | explicit schema string |
+| PHP | PHP `8.4+` | native C++ extension over arrays / zvals | self-describing text, returns arrays | explicit schema argument |
+
+### Reading the matrix
+
+- Text ASON carries its schema in the header, so many dynamic-language implementations can decode it without an external type definition.
+- Binary ASON is intentionally not self-describing. Most implementations therefore need either:
+  - a target type,
+  - a schema descriptor,
+  - or an explicit schema string.
+- “Implementation style” explains how each language maps host-language data to the common ASON text and binary formats. The wire format stays the same across languages.
+
+## Binary Note
+
+ASON-BIN may use fixed-width host-language primitives internally, but those widths are **not** extra schema names.
+
+- The public schema still only uses `int`, `float`, `bool`, and `str`.
+- Binary encoding is little-endian across the official implementations.
+- Fixed-width storage details belong to the binary codec implementation, not to the schema surface.

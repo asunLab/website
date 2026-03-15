@@ -1,49 +1,16 @@
 # 语法参考
 
-ASON 文本格式的完整参考。
+ASON 当前文本语法的完整参考。
 
-## 文档结构
+## 文档形态
 
-每个文档都遵循这个形态：
-
-```text
-schema ":" data
-```
-
-- `schema` 使用 `{...}`
-- `data` 使用元组 `(...)`
-- 列表是一个 schema 对应多行元组
-
-## Schema
+单行单值：
 
 ```ason
-{id, name, active}
-{id@int, name@str, active@bool}
+{id@int, name@str}:(1, Alice)
 ```
 
-文本模式下，类型注解是可选的。
-
-### 常见类型注解
-
-| 注解 | 含义 |
-|------|------|
-| `int` | 整数 |
-| `float` | 浮点数 |
-| `str` | 字符串 |
-| `bool` | 布尔值 |
-| `{...}` | 嵌套结构体 |
-| `[type]` | 数组 |
-| `[{...}]` | 对象数组 |
-
-## 元组
-
-```ason
-(1, Alice, true)
-```
-
-值按 schema 顺序排列。
-
-列表写法是一个 schema 对应多行元组：
+多行列表：
 
 ```ason
 [{id@int, name@str}]:
@@ -51,9 +18,77 @@ schema ":" data
   (2, Bob)
 ```
 
+`:` 前面是 Schema，后面是一条或多条元组数据。
+
+## Schema
+
+### 字段写法
+
+```ason
+{id, name, active}
+{id@int, name@str, active@bool}
+```
+
+在文本 ASON 中，标量类型注解是可选的。若出现，当前只允许：
+
+- `int`
+- `float`
+- `str`
+- `bool`
+
+结构类型同样通过 `@` 引出：
+
+- `@{...}` 嵌套结构体
+- `@[type]` 数组
+- `@[{...}]` 对象数组
+
+例如：
+
+```ason
+{profile@{id@int, name@str}}
+{tags@[str]}
+{attrs@[{key@str, value@str}]}
+```
+
+### 字段名
+
+简单字段名可以不加引号：
+
+```ason
+{id, name, active}
+```
+
+如果字段名：
+
+- 含空格
+- 以数字开头
+- 含 `{ } [ ] @ "` 等语法字符
+
+就必须加引号：
+
+```ason
+{"id uuid"@int, "65"@bool, "{}[]@\""@str}
+```
+
+## 数据
+
+数据是位置型的，值严格按 Schema 顺序对应。
+
+```ason
+{id@int, name@str, active@bool}:(1, Alice, true)
+```
+
+嵌套结构体的数据写成嵌套元组：
+
+```ason
+{user@{id@int, name@str}}:((1, Alice))
+```
+
+当前格式不支持内联对象字面量。
+
 ## 标量值
 
-### 整数
+### `int`
 
 ```ason
 42
@@ -61,38 +96,51 @@ schema ":" data
 0
 ```
 
-### 浮点数
+### `float`
 
 ```ason
 3.14
 -0.5
+1e10
 ```
 
-### 布尔值
+### `bool`
 
 ```ason
 true
 false
 ```
 
-### Null / Optional
+### null / optional
 
-空槽表示 null 或缺失值：
+空槽表示 null / 缺失：
 
 ```ason
-[{id@int, label@str}]:
-  (1, hello),
-  (2,      )
+{id@int, label@str}:(1, )
 ```
 
-### 字符串
+## 字符串
 
-当字符串不包含保留语法字符时，可以不加引号：
+### 不带引号字符串
+
+简单值可以不加引号：
 
 ```ason
 Alice
 hello world
 ```
+
+规则：
+
+- 首尾空白会被 trim
+- 出现保留语法字符时应改用引号
+- 值里若出现 `@`，应加引号，避免与 Schema 语法混淆
+
+```ason
+{name@str}:("@Alice")
+```
+
+### 带引号字符串
 
 需要保留空白或包含保留字符时使用引号：
 
@@ -102,13 +150,7 @@ hello world
 "line\nbreak"
 ```
 
-## 嵌套结构
-
-```ason
-[{name@str, dept@{title@str}}]:
-  (Alice, (Engineering)),
-  (Bob,   (Platform))
-```
+常见转义包括 `\"`、`\\`、`\n`、`\t`、`\r`。
 
 ## 数组
 
@@ -118,7 +160,16 @@ hello world
   (Bob,   [76, 88])
 ```
 
-## 键值条目列表
+也允许嵌套数组：
+
+```ason
+[{matrix@[[int]]}]:
+  ([[1, 2], [3, 4]])
+```
+
+## 条目列表
+
+ASON 已不再提供独立 map 类型。键值集合应写成条目列表：
 
 ```ason
 [{name@str, attrs@[{key@str, value@int}]}]:
@@ -130,7 +181,7 @@ hello world
 ASON 支持块注释：
 
 ```ason
-/* user list schema */
+/* user list */
 [{id@int, name@str}]:
   (1, Alice),
   (2, Bob)
@@ -138,16 +189,8 @@ ASON 支持块注释：
 
 行注释不是格式的一部分。
 
-## 单值写法
-
-单个值可以写成单行形式：
-
-```ason
-{id@int, name@str, active@bool}:(1, Alice, true)
-```
-
 ## 空白规则
 
-- token 之间的空白会被忽略
-- 不带引号的字符串会自动 trim
+- 结构 token 之间的空白会被忽略
+- 不带引号字符串会在外层自动 trim
 - 推荐使用多行美化布局，但不是必须

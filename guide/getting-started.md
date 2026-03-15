@@ -98,10 +98,32 @@ See the full [Python guide](/languages/python).
 
 | Language | Guide |
 |----------|-------|
+| C# | [C# guide](/languages/csharp) |
+| Dart | [Dart guide](/languages/dart) |
+| JS / TS | [JS / TS guide](/languages/js) |
+| PHP | [PHP guide](/languages/php) |
 | C | [C guide](/languages/c) |
 | C++ | [C++ guide](/languages/cpp) |
-| Java | [Java guide](/languages/java) |
+| Java / Kotlin | [Java / Kotlin guide](/languages/java) |
 | Zig | [Zig guide](/languages/zig) |
+
+## Language Support Matrix
+
+| Language | Minimum version | Main model | Binary decode requirement |
+|----------|------------------|------------|---------------------------|
+| Rust | Rust `1.85+` | `serde` derive / target type | target type `T` |
+| Go | Go `1.24+` | reflection + struct tags | output pointer |
+| Python | Python `3.8+` | Python dict/list + compiled extension | schema string |
+| Java / Kotlin | Java `21+` | reflection + `Class<T>` / Kotlin helper | target class |
+| C# | `.NET 8+` | `IAsonSchema` + factory | field names + types + factory |
+| Dart | Dart `3.0+` | `AsonSchema` + factory | field names + types + factory |
+| JS / TS | ES2020-capable runtime | plain objects + runtime inference | schema string |
+| PHP | PHP `8.4+` | arrays via native extension | schema argument |
+| C | C11 | explicit schema descriptor | schema descriptor |
+| C++ | C++17 | metadata macros on target type | target type `T` |
+| Zig | Zig `0.15.2+` | comptime target type | target type `T` + allocator |
+
+Use the language guide pages when you need the exact API names, examples, and current implementation limits for a specific runtime.
 
 ## Tooling
 

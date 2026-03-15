@@ -46,7 +46,7 @@ features:
 
   - icon: 🌐
     title: 多语言实现
-    details: 官方实现覆盖 Rust、Go、Python、C、C++、Java、Zig，并共享跨语言兼容性测试。
+    details: 官方实现覆盖 Rust、Go、Python、Java / Kotlin、C、C++、Zig、C#、Dart、JS / TS、PHP，并共享跨语言兼容性测试。
     link: /zh/languages/rust
     linkText: 语言指南
 

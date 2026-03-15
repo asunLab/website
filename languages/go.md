@@ -1,84 +1,57 @@
 # Go Guide
 
-The Go implementation provides reflection-based encoding and decoding for ASON text and binary formats.
+The Go implementation uses reflection and struct tags to map Go structs and slices to ASON text and binary formats.
 
-## Install
+## Minimum Version
 
-```bash
-go get github.com/ason-lab/ason-go
-```
+- Go `1.24+`
 
-## Text API
+## Implementation Model
+
+- Struct fields use `ason:"name"` tags, with `json` tag fallback.
+- Text decode writes into an output pointer.
+- Binary decode also writes into an output pointer, because the binary format is not self-describing.
+
+## Current Support
+
+- `Encode`, `EncodeTyped`
+- `EncodePretty`, `EncodePrettyTyped`
+- `Decode`
+- `EncodeBinary`, `DecodeBinary`
+- Nested structs, slices, optional / empty-slot fields, entry-list modeling for keyed data
+
+## Example
 
 ```go
-package main
-
-import (
-    "fmt"
-    ason "github.com/ason-lab/ason-go"
-)
-
 type User struct {
     ID     int64  `ason:"id"`
     Name   string `ason:"name"`
     Active bool   `ason:"active"`
 }
 
-func main() {
-    user := User{ID: 1, Name: "Alice", Active: true}
-
-    text, _ := ason.Encode(user)
-    typed, _ := ason.EncodeTyped(&user)
-    pretty, _ := ason.EncodePrettyTyped([]User{user})
-
-    fmt.Println(text)
-    fmt.Println(typed)
-    fmt.Println(pretty)
-
-    var out User
-    _ = ason.Decode(typed, &out)
+users := []User{
+    {ID: 1, Name: "Alice", Active: true},
+    {ID: 2, Name: "Bob", Active: false},
 }
+
+text, _ := ason.EncodeTyped(users)
+
+var out []User
+_ = ason.Decode(text, &out)
 ```
 
-Use `EncodeTyped` when you need type-preserving round-trips. Use `Encode` when you want shorter untyped text.
+## Notes
 
-## Binary API
+- Use `EncodeTyped` when you want `Decode` to restore numeric and boolean types directly.
+- Use entry structs instead of maps, for example `[]EnvEntry` with `key` and `value` fields.
+- Binary decode requires only the output value, because Go reflection uses the target type as the schema plan.
 
-```go
-data, _ := ason.EncodeBinary(user)
-
-var out User
-_ = ason.DecodeBinary(data, &out)
-```
-
-## Field Tags
-
-Use `ason:"fieldname"` tags to control schema field names.
-
-```go
-type Product struct {
-    ProductID   int64   `ason:"id"`
-    ProductName string  `ason:"name"`
-    Price       float64 `ason:"price"`
-}
-```
-
-## Run Examples
-
-```bash
-cd ason-go
-go run ./examples/basic
-go run ./examples/bench
-go run ./examples/complex
-```
-
-## Run Tests
+## Build and Test
 
 ```bash
 cd ason-go
 go test ./...
+go run ./examples/basic
+go run ./examples/complex
+go run ./examples/bench
 ```
-
-## Performance Notes
-
-Go usually benefits most on repeated structs and arrays. For implementation-specific notes, see [benchmark notes](/reference/benchmark-notes).

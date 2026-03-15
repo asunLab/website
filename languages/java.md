@@ -1,88 +1,60 @@
-# Java Guide
+# Java / Kotlin Guide
 
-The Java ASON library uses reflection and annotation processing to provide a JSON-style API familiar to Java developers.
+The JVM implementation targets Java first and also ships Kotlin helpers in the same artifact.
 
-## Installation
+## Minimum Version
 
-### Gradle
+- Java `21+`
+- Kotlin consumers should use a `1.9+` toolchain if they want the bundled Kotlin helper layer
 
-```groovy
-// build.gradle
-dependencies {
-    implementation 'io.ason:ason:0.1.0'
-}
-```
+## Implementation Model
 
-### Maven
+- Java uses reflection, annotations, and cached class metadata.
+- Text and binary decode use a target `Class<T>`.
+- Kotlin gets inline reified helpers on top of the same runtime.
 
-```xml
-<dependency>
-    <groupId>io.ason</groupId>
-    <artifactId>ason</artifactId>
-    <version>0.1.0</version>
-</dependency>
-```
+## Current Support
 
-## Encoding & Decoding
+- Compact text encode/decode
+- Pretty text encode/decode
+- Binary encode/decode
+- Lists, nested classes, optional / nullable fields, entry-list modeling for keyed data
 
-```java
-import io.ason.Ason;
-import io.ason.AsonField;
-import java.util.List;
+There is no standalone ASON `map` type. Use `List<Entry>` style data instead.
 
-public class Main {
-    public static class User {
-        @AsonField("id")     public long    id;
-        @AsonField("name")   public String  name;
-        @AsonField("active") public boolean active;
-
-        public User(long id, String name, boolean active) {
-            this.id = id; this.name = name; this.active = active;
-        }
-    }
-
-    public static void main(String[] args) throws Exception {
-        List<User> users = List.of(
-            new User(1, "Alice", true),
-            new User(2, "Bob",   false)
-        );
-
-        // Serialize
-        String text = Ason.encodeList(users, User.class);
-        System.out.println(text);
-        // {id@int,name@str,active@bool}:
-        //   (1,Alice,true),
-        //   (2,Bob,false)
-
-        // Deserialize
-        List<User> restored = Ason.decodeList(text, User.class);
-    }
-}
-```
-
-## Binary Format
+## Core API
 
 ```java
-byte[] bytes = Ason.encodeBinary(user);
-User restored = Ason.decodeBinary(bytes, User.class);
+String text = Ason.encode(user);
+String typed = Ason.encodeTyped(user);
+String pretty = Ason.encodePrettyTyped(user);
 
-byte[] binList = Ason.encodeBinary(users);
-List<User> restored2 = Ason.decodeBinaryList(binList, User.class);
+User restored = Ason.decode(text, User.class);
+List<User> rows = Ason.decodeList(text, User.class);
+
+byte[] bin = Ason.encodeBinary(user);
+User restored2 = Ason.decodeBinary(bin, User.class);
 ```
 
-## Field Annotations
+## Kotlin Helpers
 
-| Annotation | Description |
-|-----------|-------------|
-| `@AsonField("name")` | Override field name in ASON schema |
-| `@AsonIgnore` | Exclude field from encoding/decoding |
-| `@AsonType("int")` | Override type annotation in output |
+```kotlin
+val user: User = decode(text)
+val rows: List<User> = decodeList(text)
+```
 
-## Building
+## Notes
+
+- Java and Kotlin still use the same public ASON schema names: `int`, `float`, `str`, `bool`.
+- Binary decode requires a target class because binary ASON does not carry schema metadata inline.
+- If you need keyed data, model it as a list of entry objects instead of `Map<K, V>`.
+
+## Build and Test
 
 ```bash
 cd ason-java
-./gradlew build
 ./gradlew test
-./gradlew run
+./gradlew runBasicExample
+./gradlew runComplexExample
+./gradlew runBenchExample
 ```

@@ -1,27 +1,26 @@
 # Python Guide
 
-The Python implementation exposes a compiled extension module with a small text and binary API surface.
+The Python implementation is a compiled extension module that works with Python dicts, lists, and scalar values.
 
-## Requirements
+## Minimum Version
 
-- Python 3.13+ recommended
-- Build and run with the same Python version
+- Python `3.8+`
+- Building from source currently requires a C++17-capable compiler such as `g++ 11+`
 
-## Install
+## Implementation Model
 
-```bash
-cd ason-py
-python3 -m pip install -e .
-```
+- Text encoding infers schema from Python values.
+- `decode()` reads the schema carried by the text header and returns Python objects.
+- `decodeBinary()` needs an explicit schema string because binary ASON is not self-describing.
 
-Or build the extension in place:
+## Current Support
 
-```bash
-cd ason-py
-python3 setup.py build_ext --inplace
-```
+- `encode`, `encodeTyped`
+- `encodePretty`, `encodePrettyTyped`
+- `decode`
+- `encodeBinary`, `decodeBinary`
 
-## Text API
+## Example
 
 ```python
 import ason
@@ -31,43 +30,26 @@ users = [
     {"id": 2, "name": "Bob", "active": False},
 ]
 
-text = ason.encode(users)
 typed = ason.encodeTyped(users)
-pretty = ason.encodePrettyTyped(users)
-
 restored = ason.decode(typed)
-assert restored == users
-```
 
-`encode()` infers schema and emits untyped text. `encodeTyped()` emits typed schema and should be preferred for type-preserving round-trips.
-
-When decoding untyped text with `decode()`, values are returned as strings because the schema does not carry types.
-
-## Binary API
-
-```python
 blob = ason.encodeBinary(users)
-restored = ason.decodeBinary(blob, "[{id@int, name@str, active@bool}]")
+restored2 = ason.decodeBinary(blob, "[{id@int,name@str,active@bool}]")
 ```
 
-Binary encoding infers schema internally. Binary decoding still needs an explicit schema.
+## Notes
 
-## Run Tests
+- `encode()` writes untyped text; decoding that form returns string values because the text header does not carry scalar type metadata.
+- `encodeTyped()` is the safer default for type-preserving round-trips.
+- Keyed collections should be modeled as entry lists, not as a standalone ASON map type.
+
+## Build and Test
 
 ```bash
 cd ason-py
+python3 -m pip install -e .
 python3 -m pytest tests -v
-```
-
-## Run Examples
-
-```bash
-cd ason-py
 python3 examples/basic.py
-python3 examples/bench.py
 python3 examples/complex.py
+python3 examples/bench.py
 ```
-
-## Performance Notes
-
-Python benefits most on repetitive structured payloads. Expect bigger wins from smaller text payloads and inferred schema reuse than from raw interpreter speed alone. See [benchmark notes](/reference/benchmark-notes).

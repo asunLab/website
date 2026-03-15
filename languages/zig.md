@@ -1,86 +1,54 @@
 # Zig Guide
 
-The Zig implementation uses comptime metadata to generate schema-aware text and binary codecs.
+The Zig implementation uses comptime type information instead of runtime reflection.
 
-## Installation
+## Minimum Version
 
-Add to `build.zig.zon`:
+- Zig `0.15.2+`
 
-```zig
-.dependencies = .{
-    .ason = .{
-        .url = "https://github.com/ason-lab/ason-zig/archive/refs/heads/main.tar.gz",
-    },
-},
-```
+## Implementation Model
 
-Then in `build.zig`:
+- Schema generation is driven from the target type at comptime.
+- Text and binary decode both require a target type `T` and an allocator.
+- Binary decode can be zero-copy for some string data depending on the target shape.
 
-```zig
-const ason = b.dependency("ason", .{ .target = target, .optimize = optimize });
-exe.root_module.addImport("ason", ason.module("ason"));
-```
+## Current Support
 
-## Usage
+- Compact text encode/decode
+- Typed text encode/decode
+- Binary encode/decode
+- Structs, slices, optionals, nested structs, entry-list keyed collections
+
+## Example
 
 ```zig
-const std = @import("std");
-const ason = @import("ason");
-
 const User = struct {
     id: i64,
     name: []const u8,
     active: bool,
 };
 
-pub fn main() !void {
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    defer _ = gpa.deinit();
-    const allocator = gpa.allocator();
-
-    const users = [_]User{
-        .{ .id = 1, .name = "Alice", .active = true },
-        .{ .id = 2, .name = "Bob", .active = false },
-    };
-
-    const text = try ason.encodeVec(User, &users, allocator);
-    defer allocator.free(text);
-
-    const typed = try ason.encodeVecTyped(User, &users, allocator);
-    defer allocator.free(typed);
-
-    const restored = try ason.decodeVec(User, typed, allocator);
-    defer allocator.free(restored);
-
-    const bytes = try ason.encodeBinaryVec(User, &users, allocator);
-    defer allocator.free(bytes);
-
-    const restored2 = try ason.decodeBinaryVec(User, bytes, allocator);
-    defer allocator.free(restored2);
-}
-```
-
-## Comptime-Friendly API
-
-```zig
 const typed = try ason.encodeTyped(User, .{
     .id = 1,
     .name = "Alice",
     .active = true,
 }, allocator);
+
+const restored = try ason.decode(User, typed, allocator);
 ```
 
-## Building Examples
+## Notes
+
+- Zig commonly maps ASON `str` to `[]const u8`.
+- Binary decode requires the target type because binary ASON does not embed its schema.
+- Use entry structs instead of any map-like field model.
+
+## Build and Test
 
 ```bash
 cd ason-zig
+zig build test
 zig build run-basic
-zig build run-bench
 zig build run-complex
-```
-
-## Running Tests
-
-```bash
-cd ason-zig && zig build test
+zig build run-bench
 ```

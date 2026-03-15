@@ -46,7 +46,12 @@ All integers are little-endian. Strings are length-prefixed.
 | `Option<T>` | `[tag][payload]` |
 | `Vec<T>` | `[u32 count][elements...]` |
 | `struct` | fields in schema order |
-| `enum` | `[u32 variant_index][payload]` |
+
+Binary payloads are not self-describing in the same way as text ASON. In practice, decoding usually needs:
+
+- an explicit schema string
+- a target type
+- or a matched field layout on both sides
 
 ## Interoperability
 

@@ -98,10 +98,32 @@ assert restored == users
 
 | 语言 | 指南 |
 |------|------|
+| C# | [C# 指南](/zh/languages/csharp) |
+| Dart | [Dart 指南](/zh/languages/dart) |
+| JS / TS | [JS / TS 指南](/zh/languages/js) |
+| PHP | [PHP 指南](/zh/languages/php) |
 | C | [C 指南](/zh/languages/c) |
 | C++ | [C++ 指南](/zh/languages/cpp) |
-| Java | [Java 指南](/zh/languages/java) |
+| Java / Kotlin | [Java / Kotlin 指南](/zh/languages/java) |
 | Zig | [Zig 指南](/zh/languages/zig) |
+
+## 语言支持矩阵
+
+| 语言 | 最低版本 | 主要模型 | 二进制解码需要什么 |
+|------|----------|----------|--------------------|
+| Rust | Rust `1.85+` | `serde` derive / 目标类型 | 目标类型 `T` |
+| Go | Go `1.24+` | 反射 + struct tag | 输出指针 |
+| Python | Python `3.8+` | Python dict/list + 编译扩展 | schema 字符串 |
+| Java / Kotlin | Java `21+` | 反射 + `Class<T>` / Kotlin helper | 目标类 |
+| C# | `.NET 8+` | `IAsonSchema` + factory | 字段名 + 类型 + factory |
+| Dart | Dart `3.0+` | `AsonSchema` + factory | 字段名 + 类型 + factory |
+| JS / TS | 支持 ES2020 的运行时 | 普通对象 + 运行时推断 | schema 字符串 |
+| PHP | PHP `8.4+` | 原生扩展上的数组模型 | schema 参数 |
+| C | C11 | 显式 schema 描述符 | schema 描述符 |
+| C++ | C++17 | 目标类型上的元数据宏 | 目标类型 `T` |
+| Zig | Zig `0.15.2+` | comptime 目标类型 | 目标类型 `T` + allocator |
+
+如果你需要看某个语言的准确 API 名称、示例和当前实现边界，请继续进入对应语言页。
 
 ## 工具
 

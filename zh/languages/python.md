@@ -1,27 +1,26 @@
 # Python 指南
 
-Python 实现提供一个编译扩展模块，公开一组较小而稳定的文本与二进制 API。
+Python 版是一个编译扩展模块，直接面向 Python 的 dict、list 和标量值工作。
 
-## 要求
+## 最低版本
 
-- 推荐 Python 3.13+
-- 构建和运行必须使用同一个 Python 版本
+- Python `3.8+`
+- 从源码构建时当前需要 C++17 编译器，例如 `g++ 11+`
 
-## 安装
+## 实现方式
 
-```bash
-cd ason-py
-python3 -m pip install -e .
-```
+- 文本编码会从 Python 值自动推断 schema。
+- `decode()` 读取文本 header 里的 schema，并返回 Python 对象。
+- `decodeBinary()` 需要显式 schema 字符串，因为二进制 ASON 不是自描述的。
 
-或直接在项目内构建扩展：
+## 当前支持
 
-```bash
-cd ason-py
-python3 setup.py build_ext --inplace
-```
+- `encode`、`encodeTyped`
+- `encodePretty`、`encodePrettyTyped`
+- `decode`
+- `encodeBinary`、`decodeBinary`
 
-## 文本 API
+## 示例
 
 ```python
 import ason
@@ -31,43 +30,26 @@ users = [
     {"id": 2, "name": "Bob", "active": False},
 ]
 
-text = ason.encode(users)
 typed = ason.encodeTyped(users)
-pretty = ason.encodePrettyTyped(users)
-
 restored = ason.decode(typed)
-assert restored == users
-```
 
-`encode()` 会自动推断 schema 并输出 untyped 文本。`encodeTyped()` 会输出 typed schema，更适合保真 round-trip。
-
-对 untyped 文本使用 `decode()` 时，由于 schema 不带类型信息，返回值里的字段会以字符串形式出现。
-
-## 二进制 API
-
-```python
 blob = ason.encodeBinary(users)
-restored = ason.decodeBinary(blob, "[{id@int, name@str, active@bool}]")
+restored2 = ason.decodeBinary(blob, "[{id@int,name@str,active@bool}]")
 ```
 
-二进制编码会在内部推断 schema，但二进制解码当前仍需要显式传入 schema。
+## 说明
 
-## 运行测试
+- `encode()` 输出无类型文本；解码这种形式时，标量值会按字符串返回。
+- 如果你需要类型保真的 round-trip，优先使用 `encodeTyped()`。
+- 键值集合请用 entry-list，不要把宿主语言 `dict` 理解成 ASON 的独立 map 类型。
+
+## 构建与测试
 
 ```bash
 cd ason-py
+python3 -m pip install -e .
 python3 -m pytest tests -v
-```
-
-## 运行示例
-
-```bash
-cd ason-py
 python3 examples/basic.py
-python3 examples/bench.py
 python3 examples/complex.py
+python3 examples/bench.py
 ```
-
-## 性能说明
-
-Python 的优势更多来自重复结构数据、文本更紧凑和 schema 复用，而不是解释器层面的极限吞吐。实现级说明见 [benchmark notes](/zh/reference/benchmark-notes)。

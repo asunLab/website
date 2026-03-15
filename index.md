@@ -46,7 +46,7 @@ features:
 
   - icon: 🌐
     title: Multi-Language
-    details: Official implementations cover Rust, Go, Python, C, C++, Java, and Zig, with shared cross-language compatibility tests.
+    details: Official implementations cover Rust, Go, Python, Java / Kotlin, C, C++, Zig, C#, Dart, JS / TS, and PHP, with shared cross-language compatibility tests.
     link: /languages/rust
     linkText: Language guides
 

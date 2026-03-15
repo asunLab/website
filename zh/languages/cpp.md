@@ -1,79 +1,67 @@
 # C++ 指南
 
-C++ ASON 库基于 C 核心，增加了模板类型安全包装、RAII 资源管理及可选的 STL 集成，需要 C++17 或更高版本。
+C++ 版是 header-only 实现，依靠编译期元数据宏而不是运行时反射。
 
-## 安装
+## 最低版本
 
-```cmake
-# CMakeLists.txt
-add_subdirectory(path/to/ason/cpp)
-target_link_libraries(your_target ason_cpp)
-```
+- C++17
 
-## API 概览
+## 实现方式
+
+- 类型通过 `ASON_FIELDS(...)` 和 `ASON_TYPES(...)` 声明 schema 元数据。
+- 文本与二进制解码都依赖目标类型 `T`。
+- ASON 没有独立 `map` 类型；键值集合请用 entry struct + `std::vector`。
+
+## 当前支持
+
+- 紧凑文本编解码
+- 美化文本编解码
+- 二进制编解码
+- `std::optional`、`std::vector`、嵌套结构体、结构体数组
+
+二进制解码不是自描述的，因此通过 `decode_bin<T>(...)` 依赖目标类型。
+
+## 核心 API
 
 ```cpp
 #include "ason.hpp"
 
-// 编码
-std::string ason::encode(const T &value);
-std::string ason::encode_vec(const std::vector<T> &values);
+std::string encode(const T &value);
+std::string encode_typed(const T &value);
+std::string encode_pretty(const T &value);
+std::string encode_pretty_typed(const T &value);
 
-// 解码
-T              ason::decode<T>(std::string_view text);
-std::vector<T> ason::decode_vec<T>(std::string_view text);
+T decode<T>(std::string_view text);
+std::vector<T> decode_vec<T>(std::string_view text);
 
-// 二进制格式
-std::vector<uint8_t> ason::encode_bin(const T &value);
-T                    ason::decode_bin<T>(std::span<const uint8_t> data);
+std::vector<uint8_t> encode_bin(const T &value);
+T decode_bin<T>(std::span<const uint8_t> data);
 ```
 
 ## 示例
 
 ```cpp
-#include <iostream>
-#include <vector>
-#include "ason.hpp"
-
 struct User {
-    int64_t     id;
+    int64_t id;
     std::string name;
-    bool        active;
+    bool active;
 
-    ASON_FIELDS(id, name, active)        // 宏生成 Schema 元数据
+    ASON_FIELDS(id, name, active)
     ASON_TYPES("int", "str", "bool")
 };
-
-int main() {
-    std::vector<User> users = {
-        {1, "Alice", true},
-        {2, "Bob",   false},
-    };
-
-    std::string s = ason::encode_vec(users);
-    std::cout << s << "\n";
-
-    auto restored = ason::decode_vec<User>(s);
-    // restored == users
-
-    // 二进制往返
-    auto bytes     = ason::encode_bin_vec(users);
-    auto restored2 = ason::decode_bin_vec<User>(bytes);
-}
 ```
 
-## 构建示例
+## 说明
+
+- 对外 schema 仍然只使用 `int`、`float`、`str`、`bool`。
+- 元数据宏是 C++ 宿主类型和公共 ASON wire format 之间的桥。
+- 键值集合请显式建模成 entry type。
+
+## 构建与测试
 
 ```bash
 cd ason-cpp
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
-./build/examples/basic
-./build/examples/bench
-```
-
-## 运行测试
-
-```bash
-cd ason-cpp/build && ctest --output-on-failure
+ctest --test-dir build --output-on-failure
 ```
