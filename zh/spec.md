@@ -58,7 +58,7 @@ name@type
 {attrs@[{key@str, value@str}]}
 ```
 
-当前 ASON **没有**独立 map 类型。键值集合应写成条目列表，例如 `[{key@str, value@str}]`。
+键值集合应写成条目列表，例如 `[{key@str, value@str}]`。
 
 ## 字段名
 

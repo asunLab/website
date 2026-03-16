@@ -169,7 +169,7 @@ hello world
 
 ## 条目列表
 
-ASON 已不再提供独立 map 类型。键值集合应写成条目列表：
+键值集合写成条目列表：
 
 ```ason
 [{name@str, attrs@[{key@str, value@int}]}]:

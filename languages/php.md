@@ -37,7 +37,6 @@ $rows2 = ason_decodeBinary($bin, '[{id@int,name@str,active@bool}]');
 ## Notes
 
 - `ason_decodeBinary` needs a schema argument.
-- PHP arrays are the host-language data model; ASON itself still has no standalone map type.
 - For keyed data, keep using entry-list arrays such as `[{key@str,value@str}]`.
 
 ## Build and Test

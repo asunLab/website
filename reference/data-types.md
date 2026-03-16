@@ -45,7 +45,7 @@ Arrays can be nested:
 
 ### Entry List
 
-ASON does not use a dedicated map type. Use an array of entry structs:
+Keyed collections use an array of entry structs:
 
 ```ason
 {attrs@[{key@str, value@int}]}:([(age, 30), (score, 95)])
@@ -63,22 +63,22 @@ An empty slot means `null` / `None`:
 
 ## Cross-Language Type Mapping
 
-| ASON type | Rust | Go | Python | Java / Kotlin | C | C++ | Zig | C# | Dart | JS / TS | PHP |
-|-----------|------|----|--------|---------------|---|-----|-----|----|------|---------|-----|
-| `int` | `i64` | `int64` | `int` | `long` / `Long` | `int64_t` | `int64_t` | `i64` | `long` | `int` | `number` (integer) | `int` |
-| `float` | `f64` | `float64` | `float` | `double` / `Double` | `double` | `double` | `f64` | `double` | `double` | `number` | `float` |
-| `bool` | `bool` | `bool` | `bool` | `boolean` / `Boolean` | `bool` | `bool` | `bool` | `bool` | `bool` | `boolean` | `bool` |
-| `str` | `String` / `&str` | `string` | `str` | `String` | `char*` / buffer field | `std::string` | `[]const u8` | `string` | `String` | `string` | `string` |
-| null / empty slot | `Option<T>` | `nil` / pointer / empty slot | `None` | nullable field / empty slot | nullable pointer / empty slot | `std::optional<T>` / empty slot | `?T` | nullable reference / nullable value | `null` | `null` / `undefined` | `null` |
-| `[T]` | `Vec<T>` | `[]T` | `list` | `List<T>` | array / repeated rows with schema | `std::vector<T>` | `[]T` | `List<T>` / array | `List<T>` | `T[]` | indexed array |
-| nested struct | `struct` | `struct` | `dict` / object factory result | class / data class | `struct` + schema descriptor | `struct` + metadata macros | `struct` | class / record implementing schema interface | class implementing `AsonSchema` | plain object | associative array / object-like array |
+| ASON type | Rust | Go | Python | Java / Kotlin | Swift | C | C++ | Zig | C# | Dart | JS / TS | PHP |
+|-----------|------|----|--------|---------------|-------|---|-----|-----|----|------|---------|-----|
+| `int` | `i64` | `int64` | `int` | `long` / `Long` | `Int64` | `int64_t` | `int64_t` | `i64` | `long` | `int` | `number` (integer) | `int` |
+| `float` | `f64` | `float64` | `float` | `double` / `Double` | `Double` | `double` | `double` | `f64` | `double` | `double` | `number` | `float` |
+| `bool` | `bool` | `bool` | `bool` | `boolean` / `Boolean` | `Bool` | `bool` | `bool` | `bool` | `bool` | `bool` | `boolean` | `bool` |
+| `str` | `String` / `&str` | `string` | `str` | `String` | `String` | `char*` / buffer field | `std::string` | `[]const u8` | `string` | `String` | `string` | `string` |
+| null / empty slot | `Option<T>` | `nil` / pointer / empty slot | `None` | nullable field / empty slot | `nil` / optional | nullable pointer / empty slot | `std::optional<T>` / empty slot | `?T` | nullable reference / nullable value | `null` | `null` / `undefined` | `null` |
+| `[T]` | `Vec<T>` | `[]T` | `list` | `List<T>` | `[T]` | array / repeated rows with schema | `std::vector<T>` | `[]T` | `List<T>` / array | `List<T>` | `T[]` | indexed array |
+| nested struct | `struct` | `struct` | `dict` / object factory result | class / data class | `AsonValue.object` / host model | `struct` + schema descriptor | `struct` + metadata macros | `struct` | class / record implementing schema interface | class implementing `AsonSchema` | plain object | associative array / object-like array |
 
 ### Notes
 
 - ASON schema names stay the same in every language: only `int`, `float`, `bool`, `str`.
 - A host language may use a different concrete type name for the same ASON scalar. For example, Java uses `double` for `float`, and Zig commonly maps `str` to `[]const u8`.
 - JS / TS only has one numeric runtime type, so `int` means “a number that is encoded as an integer”.
-- ASON no longer has a standalone `map` type. Use entry lists such as `[{key@str,value@str}]`.
+- Keyed collections use entry lists such as `[{key@str,value@str}]`.
 
 ## Language Support Overview
 
@@ -88,6 +88,7 @@ An empty slot means `null` / `None`:
 | Go | Go `1.24+` | reflection + struct tags | output pointer | output pointer |
 | Python | Python `3.8+` | compiled C++ extension over Python dict/list values | self-describing text, returns Python objects | explicit schema string |
 | Java / Kotlin | Java `21+`, Kotlin helper layer on `1.9+` toolchain | reflection + annotations + class metadata | target `Class<T>` or Kotlin reified helper | target `Class<T>` / Kotlin reified helper |
+| Swift | Swift tools `5.9+` | native Swift value model around `AsonValue` | self-describing text, returns `AsonValue` | self-describing binary, returns `AsonValue` |
 | C | C11 | explicit schema descriptors / macros | schema descriptor + output buffer | schema descriptor + output buffer |
 | C++ | C++17 | template metadata macros (`ASON_FIELDS`, `ASON_TYPES`) | target type `T` | target type `T` |
 | Zig | Zig `0.15.2+` | comptime type introspection | target type `T` + allocator | target type `T` + allocator |
@@ -103,6 +104,7 @@ An empty slot means `null` / `None`:
   - a target type,
   - a schema descriptor,
   - or an explicit schema string.
+- Swift is the main exception in the current repository: its binary API carries enough typed information to round-trip directly into `AsonValue`.
 - “Implementation style” explains how each language maps host-language data to the common ASON text and binary formats. The wire format stays the same across languages.
 
 ## Binary Note

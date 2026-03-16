@@ -41,7 +41,7 @@ restored2 = ason.decodeBinary(blob, "[{id@int,name@str,active@bool}]")
 
 - `encode()` writes untyped text; decoding that form returns string values because the text header does not carry scalar type metadata.
 - `encodeTyped()` is the safer default for type-preserving round-trips.
-- Keyed collections should be modeled as entry lists, not as a standalone ASON map type.
+- Keyed collections should be modeled as entry lists.
 
 ## Build and Test
 

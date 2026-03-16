@@ -104,7 +104,7 @@ Current ASON text does **not** use inline object literals in the data section:
 {user@{id@int}}:({id: 1})   // not current ASON
 ```
 
-It also does **not** have a standalone map syntax. Model key-value collections as entry lists:
+Write key-value collections as entry lists:
 
 ```ason
 {attrs@[{key@str, value@str}]}:([(lang, zig), (tier, prod)])

@@ -41,7 +41,7 @@ const rows2 = decodeBinary(blob, '[{id@int,name@str,active@bool}]');
 
 - JS / TS only has one numeric runtime type, so `int` means “encoded as an integer-valued number”.
 - `encode()` writes untyped text. Use `encodeTyped()` if you need type-preserving `decode()`.
-- There is no standalone ASON map type; keyed data should use entry-list arrays.
+- Keyed data should use entry-list arrays.
 
 ## Build and Test
 

@@ -51,7 +51,7 @@ fn main() -> Result<()> {
 
 - Rust 宿主侧常用 `i64`、`f64`，但对外 ASON schema 仍只有 `int`、`float`、`str`、`bool`。
 - 二进制解码依赖目标类型，不需要额外 schema 字符串。
-- ASON 不再有独立 map 类型；键值集合请显式建模成 entry struct。
+- 键值集合请显式建模成 entry struct。
 
 ## 构建与测试
 

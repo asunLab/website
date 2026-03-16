@@ -167,7 +167,7 @@ Nested arrays are also allowed:
 
 ## Entry Lists
 
-ASON no longer has a standalone map type. Model key-value collections as entry lists:
+Write keyed collections as entry lists:
 
 ```ason
 [{name@str, attrs@[{key@str, value@int}]}]:

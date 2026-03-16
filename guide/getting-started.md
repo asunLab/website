@@ -98,6 +98,7 @@ See the full [Python guide](/languages/python).
 
 | Language | Guide |
 |----------|-------|
+| Swift | [Swift guide](/languages/swift) |
 | C# | [C# guide](/languages/csharp) |
 | Dart | [Dart guide](/languages/dart) |
 | JS / TS | [JS / TS guide](/languages/js) |
@@ -115,6 +116,7 @@ See the full [Python guide](/languages/python).
 | Go | Go `1.24+` | reflection + struct tags | output pointer |
 | Python | Python `3.8+` | Python dict/list + compiled extension | schema string |
 | Java / Kotlin | Java `21+` | reflection + `Class<T>` / Kotlin helper | target class |
+| Swift | Swift tools `5.9+` | `AsonValue` value model | built into binary payload |
 | C# | `.NET 8+` | `IAsonSchema` + factory | field names + types + factory |
 | Dart | Dart `3.0+` | `AsonSchema` + factory | field names + types + factory |
 | JS / TS | ES2020-capable runtime | plain objects + runtime inference | schema string |
@@ -123,7 +125,7 @@ See the full [Python guide](/languages/python).
 | C++ | C++17 | metadata macros on target type | target type `T` |
 | Zig | Zig `0.15.2+` | comptime target type | target type `T` + allocator |
 
-Use the language guide pages when you need the exact API names, examples, and current implementation limits for a specific runtime.
+Use the language guide pages for the exact install steps, minimal examples, and current implementation limits for each runtime.
 
 ## Tooling
 

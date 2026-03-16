@@ -98,6 +98,7 @@ assert restored == users
 
 | 语言 | 指南 |
 |------|------|
+| Swift | [Swift 指南](/zh/languages/swift) |
 | C# | [C# 指南](/zh/languages/csharp) |
 | Dart | [Dart 指南](/zh/languages/dart) |
 | JS / TS | [JS / TS 指南](/zh/languages/js) |
@@ -115,6 +116,7 @@ assert restored == users
 | Go | Go `1.24+` | 反射 + struct tag | 输出指针 |
 | Python | Python `3.8+` | Python dict/list + 编译扩展 | schema 字符串 |
 | Java / Kotlin | Java `21+` | 反射 + `Class<T>` / Kotlin helper | 目标类 |
+| Swift | Swift tools `5.9+` | `AsonValue` 值模型 | 内建在 binary payload 中 |
 | C# | `.NET 8+` | `IAsonSchema` + factory | 字段名 + 类型 + factory |
 | Dart | Dart `3.0+` | `AsonSchema` + factory | 字段名 + 类型 + factory |
 | JS / TS | 支持 ES2020 的运行时 | 普通对象 + 运行时推断 | schema 字符串 |
@@ -123,7 +125,7 @@ assert restored == users
 | C++ | C++17 | 目标类型上的元数据宏 | 目标类型 `T` |
 | Zig | Zig `0.15.2+` | comptime 目标类型 | 目标类型 `T` + allocator |
 
-如果你需要看某个语言的准确 API 名称、示例和当前实现边界，请继续进入对应语言页。
+如果你需要看某个语言的安装方式、最小示例、准确 API 名称和当前实现边界，请继续进入对应语言页。
 
 ## 工具
 

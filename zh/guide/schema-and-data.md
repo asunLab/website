@@ -104,7 +104,7 @@ name@type
 {user@{id@int}}:({id: 1})   // 不是当前 ASON
 ```
 
-也**没有**独立 map 语法。键值集合应建模为条目列表：
+键值集合应建模为条目列表：
 
 ```ason
 {attrs@[{key@str, value@str}]}:([(lang, zig), (tier, prod)])

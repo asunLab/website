@@ -58,7 +58,7 @@ Examples:
 {attrs@[{key@str, value@str}]}
 ```
 
-Current ASON does **not** have a standalone map type. Use entry lists such as `[{key@str, value@str}]`.
+Keyed collections use entry lists such as `[{key@str, value@str}]`.
 
 ## Field Names
 

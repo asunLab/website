@@ -37,7 +37,6 @@ $rows2 = ason_decodeBinary($bin, '[{id@int,name@str,active@bool}]');
 ## 说明
 
 - `ason_decodeBinary` 需要 schema 参数。
-- PHP 数组只是宿主语言的数据模型；ASON 本身已经没有独立 map 类型。
 - 如果要表达键值集合，请统一用 entry-list 数组，例如 `[{key@str,value@str}]`。
 
 ## 构建与测试

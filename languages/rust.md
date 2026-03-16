@@ -51,7 +51,7 @@ fn main() -> Result<()> {
 
 - Rust uses host types such as `i64` and `f64`, but the ASON schema still only exposes `int`, `float`, `bool`, and `str`.
 - Binary decode requires the target type, not a schema string.
-- There is no standalone ASON map type; keyed collections should be explicit entry structs.
+- Keyed collections should be explicit entry structs.
 
 ## Build and Test
 
