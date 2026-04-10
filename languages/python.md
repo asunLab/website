@@ -39,7 +39,7 @@ restored2 = ason.decodeBinary(blob, "[{id@int,name@str,active@bool}]")
 
 ## Notes
 
-- `encode()` writes untyped text; decoding that form returns string values because the text header does not carry scalar type metadata.
+- `encode()` writes schema text without scalar hints; decoding that form returns string values because the text header does not carry those scalar hints.
 - `encodeTyped()` is the safer default for type-preserving round-trips.
 - Keyed collections should be modeled as entry lists.
 

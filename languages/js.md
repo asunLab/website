@@ -40,7 +40,7 @@ const rows2 = decodeBinary(blob, '[{id@int,name@str,active@bool}]');
 ## Notes
 
 - JS / TS only has one numeric runtime type, so `int` means “encoded as an integer-valued number”.
-- `encode()` writes untyped text. Use `encodeTyped()` if you need type-preserving `decode()`.
+- `encode()` writes schema text without scalar hints. Use `encodeTyped()` if you need type-preserving `decode()`.
 - Keyed data should use entry-list arrays.
 
 ## Build and Test

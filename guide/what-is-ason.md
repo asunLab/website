@@ -31,7 +31,7 @@ ASON is designed for workloads where JSON repeats the same field names over and 
 
 - schema and data are separated
 - rows are compact and easy to scan
-- typed and untyped text are both supported
+- text can be written with or without scalar hints
 - binary encoding is available for runtime-local use
 - official libraries share a common spec and compatibility matrix
 

@@ -40,7 +40,7 @@ const rows2 = decodeBinary(blob, '[{id@int,name@str,active@bool}]');
 ## 说明
 
 - JS / TS 运行时只有一种 `number`，因此这里的 `int` 表示“按整数形式编码的 number”。
-- `encode()` 输出无类型文本；如果你希望 `decode()` 保留原始数值 / 布尔类型，请使用 `encodeTyped()`。
+- `encode()` 输出不带基本类型提示的 schema 文本；如果你希望 `decode()` 保留原始数值 / 布尔类型，请使用 `encodeTyped()`。
 - 键值集合请使用 entry-list 数组。
 
 ## 构建与测试

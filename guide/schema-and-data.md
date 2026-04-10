@@ -32,21 +32,21 @@ For a list, write the schema once and then multiple tuples:
 
 ## Schema Rules
 
-Each field is either:
+Each field uses `@` as the field binding marker. A scalar field may be written as:
 
 ```text
 name
 name@type
 ```
 
-Scalar schema types are only:
+Scalar hint names are only:
 
 - `int`
 - `float`
 - `str`
 - `bool`
 
-Structured types use `@` plus structure:
+Complex fields use the same `@` as a required structural binding:
 
 - `@{...}` nested struct
 - `@[type]` array
@@ -59,6 +59,11 @@ Examples:
 {tags@[str]}
 {attrs@[{key@str, value@str}]}
 ```
+
+This means:
+
+- `name` and `name@str` produce the same structural layout
+- `address@{...}` and `tags@[...]` cannot drop `@`, because it binds the field to the nested schema
 
 ## Field Names
 

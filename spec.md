@@ -30,21 +30,21 @@ The schema is written once. Tuples after `:` follow schema order.
 
 ## Schema Rules
 
-A field definition is either:
+A field definition uses `@` as the field binding marker. A scalar field may be written as:
 
 ```text
 name
 name@type
 ```
 
-The only scalar schema type names are:
+For scalar fields, the only hint names are:
 
 - `int`
 - `float`
 - `str`
 - `bool`
 
-Structured types use the same `@` marker:
+For complex fields, the same `@` marker becomes a required structural binding:
 
 - `@{...}` nested struct
 - `@[type]` array
@@ -59,6 +59,11 @@ Examples:
 ```
 
 Keyed collections use entry lists such as `[{key@str, value@str}]`.
+
+In short:
+
+- `id` and `id@int` have the same layout, but `@int` adds scalar type clarity
+- `profile@{...}` and `tags@[...]` must keep `@` because it marks the nested structure boundary
 
 ## Field Names
 

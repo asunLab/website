@@ -39,7 +39,7 @@ restored2 = ason.decodeBinary(blob, "[{id@int,name@str,active@bool}]")
 
 ## 说明
 
-- `encode()` 输出无类型文本；解码这种形式时，标量值会按字符串返回。
+- `encode()` 输出不带基本类型提示的 schema 文本；解码这种形式时，标量值会按字符串返回。
 - 如果你需要类型保真的 round-trip，优先使用 `encodeTyped()`。
 - 键值集合请用 entry-list。
 

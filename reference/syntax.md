@@ -29,14 +29,14 @@ The schema appears before `:`. Data appears after `:` as one or more tuples.
 {id@int, name@str, active@bool}
 ```
 
-In text ASON, scalar type annotations are optional. When present, the only scalar names are:
+In text ASON, `@` is the field binding marker. Scalar hints are optional. When present, the only scalar names are:
 
 - `int`
 - `float`
 - `str`
 - `bool`
 
-Structured annotations use the same `@` marker:
+For complex fields, the same `@` marker is a required structural binding:
 
 - `@{...}` nested struct
 - `@[type]` array
@@ -49,6 +49,8 @@ Examples:
 {tags@[str]}
 {attrs@[{key@str, value@str}]}
 ```
+
+`id` and `id@int` are layout-equivalent, but `profile@{...}` and `tags@[...]` must keep `@` so the parser can see the nested structure boundary.
 
 ### Field names
 

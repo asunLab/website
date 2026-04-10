@@ -67,7 +67,8 @@ ASON 的行导向格式使每个元组 `(...)` 都是独立的完整单元。客
 ## 输出格式
 使用 ASON 格式，Schema 如下。只输出 ASON 块，不要任何解释。
 
-Schema@{field1@type, field2@type, ...}
+Schema:
+{field1, field2@int, nested@{child}, items@[str], ...}
 
 ## 数据
 ...你的输入数据...
