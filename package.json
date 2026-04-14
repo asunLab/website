@@ -1,7 +1,7 @@
 {
-  "name": "ason-website",
+  "name": "asun-website",
   "version": "1.0.0",
-  "description": "ASON official website",
+  "description": "ASUN official website",
   "private": true,
   "scripts": {
     "dev": "vitepress dev",

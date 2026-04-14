@@ -1,6 +1,6 @@
-# ASON Specification
+# ASUN Specification
 
-This page is the concise website specification for the current ASON format used by the implementations in this repository.
+This page is the concise website specification for the current ASUN format used by the implementations in this repository.
 
 For deeper detail, continue to:
 
@@ -10,17 +10,17 @@ For deeper detail, continue to:
 
 ## Core Shape
 
-ASON separates **schema** from **data**.
+ASUN separates **schema** from **data**.
 
 Single value:
 
-```ason
+```asun
 {id@int, name@str, active@bool}:(1, Alice, true)
 ```
 
 List of rows:
 
-```ason
+```asun
 [{id@int, name@str, active@bool}]:
   (1, Alice, true),
   (2, Bob, false)
@@ -52,7 +52,7 @@ For complex fields, the same `@` marker becomes a required structural binding:
 
 Examples:
 
-```ason
+```asun
 {profile@{id@int, name@str}}
 {tags@[str]}
 {attrs@[{key@str, value@str}]}
@@ -69,7 +69,7 @@ In short:
 
 Simple field names may be unquoted:
 
-```ason
+```asun
 {id, name, active}
 ```
 
@@ -79,7 +79,7 @@ Quoted field names are required when a field name:
 - starts with digits
 - contains syntax characters such as `{ } [ ] @ "`
 
-```ason
+```asun
 {"id uuid"@int, "65"@bool, "{}[]@\""@str}
 ```
 
@@ -89,7 +89,7 @@ Data is positional, not keyed. The first value matches the first field, the seco
 
 Nested struct values are written as nested tuples:
 
-```ason
+```asun
 {user@{id@int, name@str}}:((1, Alice))
 ```
 
@@ -99,7 +99,7 @@ Inline object literals in the data section are not part of the current format.
 
 ### `int`
 
-```ason
+```asun
 42
 -7
 0
@@ -107,7 +107,7 @@ Inline object literals in the data section are not part of the current format.
 
 ### `float`
 
-```ason
+```asun
 3.14
 -0.5
 1e10
@@ -115,7 +115,7 @@ Inline object literals in the data section are not part of the current format.
 
 ### `bool`
 
-```ason
+```asun
 true
 false
 ```
@@ -124,13 +124,13 @@ false
 
 An empty slot means null / absent:
 
-```ason
+```asun
 {id@int, label@str}:(1, )
 ```
 
 ## Strings
 
-ASON has two string forms.
+ASUN has two string forms.
 
 Unquoted strings:
 
@@ -146,7 +146,7 @@ Quoted strings:
 
 Examples:
 
-```ason
+```asun
 Alice
 "Alice Smith"
 "  padded  "
@@ -155,15 +155,15 @@ Alice
 
 In schema, `@` is structural syntax. In data, `@` is ordinary content. To avoid ambiguity, values containing `@` should be quoted:
 
-```ason
+```asun
 {name@str}:("@Alice")
 ```
 
 ## Comments
 
-ASON supports block comments:
+ASUN supports block comments:
 
-```ason
+```asun
 /* user list */
 [{id@int, name@str}]:
   (1, Alice),
@@ -174,15 +174,15 @@ Line comments are not part of the format.
 
 ## Binary Note
 
-ASON-BIN is not self-describing in the same way as text ASON. In practice, binary decoding usually needs an external schema, target type, or matched field layout.
+ASUN-BIN is not self-describing in the same way as text ASUN. In practice, binary decoding usually needs an external schema, target type, or matched field layout.
 
-Use text ASON when you want:
+Use text ASUN when you want:
 
 - human-readable payloads
 - cross-language interchange
 - schema carried in the payload
 
-Use ASON-BIN when you want:
+Use ASUN-BIN when you want:
 
 - compact machine-oriented transport
 - high-performance runtime-to-runtime exchange

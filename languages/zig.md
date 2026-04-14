@@ -28,25 +28,25 @@ const User = struct {
     active: bool,
 };
 
-const typed = try ason.encodeTyped(User, .{
+const typed = try asun.encodeTyped(User, .{
     .id = 1,
     .name = "Alice",
     .active = true,
 }, allocator);
 
-const restored = try ason.decode(User, typed, allocator);
+const restored = try asun.decode(User, typed, allocator);
 ```
 
 ## Notes
 
-- Zig commonly maps ASON `str` to `[]const u8`.
-- Binary decode requires the target type because binary ASON does not embed its schema.
+- Zig commonly maps ASUN `str` to `[]const u8`.
+- Binary decode requires the target type because binary ASUN does not embed its schema.
 - Use entry structs instead of any map-like field model.
 
 ## Build and Test
 
 ```bash
-cd ason-zig
+cd asun-zig
 zig build test
 zig build run-basic
 zig build run-complex

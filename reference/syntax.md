@@ -1,18 +1,18 @@
 # Syntax Reference
 
-Complete reference for the current ASON text syntax.
+Complete reference for the current ASUN text syntax.
 
 ## Document Shapes
 
 Single row:
 
-```ason
+```asun
 {id@int, name@str}:(1, Alice)
 ```
 
 Multiple rows:
 
-```ason
+```asun
 [{id@int, name@str}]:
   (1, Alice),
   (2, Bob)
@@ -24,12 +24,12 @@ The schema appears before `:`. Data appears after `:` as one or more tuples.
 
 ### Field syntax
 
-```ason
+```asun
 {id, name, active}
 {id@int, name@str, active@bool}
 ```
 
-In text ASON, `@` is the field binding marker. Scalar hints are optional. When present, the only scalar names are:
+In text ASUN, `@` is the field binding marker. Scalar hints are optional. When present, the only scalar names are:
 
 - `int`
 - `float`
@@ -44,7 +44,7 @@ For complex fields, the same `@` marker is a required structural binding:
 
 Examples:
 
-```ason
+```asun
 {profile@{id@int, name@str}}
 {tags@[str]}
 {attrs@[{key@str, value@str}]}
@@ -56,7 +56,7 @@ Examples:
 
 Simple names may be unquoted:
 
-```ason
+```asun
 {id, name, active}
 ```
 
@@ -66,7 +66,7 @@ Quoted field names are required when a field name:
 - starts with digits
 - contains syntax characters such as `{ } [ ] @ "`
 
-```ason
+```asun
 {"id uuid"@int, "65"@bool, "{}[]@\""@str}
 ```
 
@@ -74,13 +74,13 @@ Quoted field names are required when a field name:
 
 Data is positional. Values follow schema order.
 
-```ason
+```asun
 {id@int, name@str, active@bool}:(1, Alice, true)
 ```
 
 For nested structs, data is written as nested tuples:
 
-```ason
+```asun
 {user@{id@int, name@str}}:((1, Alice))
 ```
 
@@ -90,7 +90,7 @@ Inline object literals are not part of the current format.
 
 ### `int`
 
-```ason
+```asun
 42
 -7
 0
@@ -98,7 +98,7 @@ Inline object literals are not part of the current format.
 
 ### `float`
 
-```ason
+```asun
 3.14
 -0.5
 1e10
@@ -106,7 +106,7 @@ Inline object literals are not part of the current format.
 
 ### `bool`
 
-```ason
+```asun
 true
 false
 ```
@@ -115,7 +115,7 @@ false
 
 An empty slot means null / absent:
 
-```ason
+```asun
 {id@int, label@str}:(1, )
 ```
 
@@ -125,7 +125,7 @@ An empty slot means null / absent:
 
 Unquoted strings are allowed for simple values:
 
-```ason
+```asun
 Alice
 hello world
 ```
@@ -136,7 +136,7 @@ Rules:
 - reserved syntax characters should be quoted instead
 - if a value contains `@`, quote it to avoid confusion with schema syntax
 
-```ason
+```asun
 {name@str}:("@Alice")
 ```
 
@@ -144,7 +144,7 @@ Rules:
 
 Use quotes when you need to preserve whitespace or include reserved characters:
 
-```ason
+```asun
 "value with, comma"
 "  leading spaces  "
 "line\nbreak"
@@ -154,7 +154,7 @@ Supported escapes include `\"`, `\\`, `\n`, `\t`, and `\r`.
 
 ## Arrays
 
-```ason
+```asun
 [{name@str, scores@[int]}]:
   (Alice, [90, 85, 92]),
   (Bob,   [76, 88])
@@ -162,7 +162,7 @@ Supported escapes include `\"`, `\\`, `\n`, `\t`, and `\r`.
 
 Nested arrays are also allowed:
 
-```ason
+```asun
 [{matrix@[[int]]}]:
   ([[1, 2], [3, 4]])
 ```
@@ -171,16 +171,16 @@ Nested arrays are also allowed:
 
 Write keyed collections as entry lists:
 
-```ason
+```asun
 [{name@str, attrs@[{key@str, value@int}]}]:
   (Alice, [(age, 30), (score, 95)])
 ```
 
 ## Comments
 
-ASON supports block comments:
+ASUN supports block comments:
 
-```ason
+```asun
 /* user list */
 [{id@int, name@str}]:
   (1, Alice),

@@ -10,14 +10,14 @@ PHP 版是一个原生 C++ 扩展，直接面向关联数组、索引数组和 P
 
 - 文本编码从 PHP 数组和值自动推断 schema。
 - 文本解码读取文本里自带的 schema，返回 PHP 数组。
-- 二进制解码需要显式 schema 参数，因为 binary ASON 不是自描述的。
+- 二进制解码需要显式 schema 参数，因为 binary ASUN 不是自描述的。
 
 ## 当前支持
 
-- `ason_encode`、`ason_encodeTyped`
-- `ason_encodePretty`、`ason_encodePrettyTyped`
-- `ason_decode`
-- `ason_encodeBinary`、`ason_decodeBinary`
+- `asun_encode`、`asun_encodeTyped`
+- `asun_encodePretty`、`asun_encodePrettyTyped`
+- `asun_decode`
+- `asun_encodeBinary`、`asun_decodeBinary`
 
 ## 示例
 
@@ -27,26 +27,26 @@ $users = [
     ['id' => 2, 'name' => 'Bob', 'active' => false],
 ];
 
-$typed = ason_encodeTyped($users);
-$rows = ason_decode($typed);
+$typed = asun_encodeTyped($users);
+$rows = asun_decode($typed);
 
-$bin = ason_encodeBinary($users);
-$rows2 = ason_decodeBinary($bin, '[{id@int,name@str,active@bool}]');
+$bin = asun_encodeBinary($users);
+$rows2 = asun_decodeBinary($bin, '[{id@int,name@str,active@bool}]');
 ```
 
 ## 说明
 
-- `ason_decodeBinary` 需要 schema 参数。
+- `asun_decodeBinary` 需要 schema 参数。
 - 如果要表达键值集合，请统一用 entry-list 数组，例如 `[{key@str,value@str}]`。
 
 ## 构建与测试
 
 ```bash
-cd ason-php
+cd asun-php
 phpize
-./configure --enable-ason
+./configure --enable-asun
 make -j4
 make test REPORT_EXIT_STATUS=1 NO_INTERACTION=1
-php -d extension=modules/ason.so examples/basic.php
-php -d extension=modules/ason.so examples/bench.php
+php -d extension=modules/asun.so examples/basic.php
+php -d extension=modules/asun.so examples/bench.php
 ```

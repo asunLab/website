@@ -6,12 +6,12 @@ Pick your language below for a quick first round-trip.
 
 ```toml
 [dependencies]
-ason = "0.1"
+asun = "0.1"
 serde = { version = "1", features = ["derive"] }
 ```
 
 ```rust
-use ason::{decode, encode_typed, Result};
+use asun::{decode, encode_typed, Result};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
@@ -39,7 +39,7 @@ See the full [Rust guide](/languages/rust).
 ## Go
 
 ```bash
-go get github.com/ason-lab/ason-go
+go get github.com/asun-lab/asun-go
 ```
 
 ```go
@@ -47,13 +47,13 @@ package main
 
 import (
     "fmt"
-    ason "github.com/ason-lab/ason-go"
+    asun "github.com/asun-lab/asun-go"
 )
 
 type User struct {
-    ID     int64  `ason:"id"`
-    Name   string `ason:"name"`
-    Active bool   `ason:"active"`
+    ID     int64  `asun:"id"`
+    Name   string `asun:"name"`
+    Active bool   `asun:"active"`
 }
 
 func main() {
@@ -62,9 +62,9 @@ func main() {
         {ID: 2, Name: "Bob", Active: false},
     }
 
-    text, _ := ason.EncodeTyped(users)
+    text, _ := asun.EncodeTyped(users)
     var out []User
-    _ = ason.Decode(text, &out)
+    _ = asun.Decode(text, &out)
     fmt.Println(out)
 }
 ```
@@ -74,20 +74,20 @@ See the full [Go guide](/languages/go).
 ## Python
 
 ```bash
-cd ason-py
+cd asun-py
 python3 -m pip install -e .
 ```
 
 ```python
-import ason
+import asun
 
 users = [
     {"id": 1, "name": "Alice", "active": True},
     {"id": 2, "name": "Bob", "active": False},
 ]
 
-text = ason.encodeTyped(users)
-restored = ason.decode(text)
+text = asun.encodeTyped(users)
+restored = asun.decode(text)
 
 assert restored == users
 ```
@@ -96,34 +96,34 @@ See the full [Python guide](/languages/python).
 
 ## Other Languages
 
-| Language | Guide |
-|----------|-------|
-| Swift | [Swift guide](/languages/swift) |
-| C# | [C# guide](/languages/csharp) |
-| Dart | [Dart guide](/languages/dart) |
-| JS / TS | [JS / TS guide](/languages/js) |
-| PHP | [PHP guide](/languages/php) |
-| C | [C guide](/languages/c) |
-| C++ | [C++ guide](/languages/cpp) |
+| Language      | Guide                                  |
+| ------------- | -------------------------------------- |
+| Swift         | [Swift guide](/languages/swift)        |
+| C#            | [C# guide](/languages/csharp)          |
+| Dart          | [Dart guide](/languages/dart)          |
+| JS / TS       | [JS / TS guide](/languages/js)         |
+| PHP           | [PHP guide](/languages/php)            |
+| C             | [C guide](/languages/c)                |
+| C++           | [C++ guide](/languages/cpp)            |
 | Java / Kotlin | [Java / Kotlin guide](/languages/java) |
-| Zig | [Zig guide](/languages/zig) |
+| Zig           | [Zig guide](/languages/zig)            |
 
 ## Language Support Matrix
 
-| Language | Minimum version | Main model | Binary decode requirement |
-|----------|------------------|------------|---------------------------|
-| Rust | Rust `1.85+` | `serde` derive / target type | target type `T` |
-| Go | Go `1.24+` | reflection + struct tags | output pointer |
-| Python | Python `3.8+` | Python dict/list + compiled extension | schema string |
-| Java / Kotlin | Java `21+` | reflection + `Class<T>` / Kotlin helper | target class |
-| Swift | Swift tools `5.9+` | `AsonValue` value model | built into binary payload |
-| C# | `.NET 8+` | `IAsonSchema` + factory | field names + types + factory |
-| Dart | Dart `3.0+` | `AsonSchema` + factory | field names + types + factory |
-| JS / TS | ES2020-capable runtime | plain objects + runtime inference | schema string |
-| PHP | PHP `8.4+` | arrays via native extension | schema argument |
-| C | C11 | explicit schema descriptor | schema descriptor |
-| C++ | C++17 | metadata macros on target type | target type `T` |
-| Zig | Zig `0.15.2+` | comptime target type | target type `T` + allocator |
+| Language      | Minimum version        | Main model                              | Binary decode requirement     |
+| ------------- | ---------------------- | --------------------------------------- | ----------------------------- |
+| Rust          | Rust `1.85+`           | `serde` derive / target type            | target type `T`               |
+| Go            | Go `1.24+`             | reflection + struct tags                | output pointer                |
+| Python        | Python `3.8+`          | Python dict/list + compiled extension   | schema string                 |
+| Java / Kotlin | Java `21+`             | reflection + `Class<T>` / Kotlin helper | target class                  |
+| Swift         | Swift tools `5.9+`     | `AsunValue` value model                 | built into binary payload     |
+| C#            | `.NET 8+`              | `IAsunSchema` + factory                 | field names + types + factory |
+| Dart          | Dart `3.0+`            | `AsunSchema` + factory                  | field names + types + factory |
+| JS / TS       | ES2020-capable runtime | plain objects + runtime inference       | schema string                 |
+| PHP           | PHP `8.4+`             | arrays via native extension             | schema argument               |
+| C             | C11                    | explicit schema descriptor              | schema descriptor             |
+| C++           | C++17                  | metadata macros on target type          | target type `T`               |
+| Zig           | Zig `0.15.2+`          | comptime target type                    | target type `T` + allocator   |
 
 Use the language guide pages for the exact install steps, minimal examples, and current implementation limits for each runtime.
 

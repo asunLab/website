@@ -4,11 +4,11 @@ This page exists to keep performance claims precise.
 
 ## Read This Before Quoting Numbers
 
-ASON does not have one universal speed multiplier across all languages.
+ASUN does not have one universal speed multiplier across all languages.
 
 Use benchmark claims carefully:
 
-- quote a language, not just "ASON"
+- quote a language, not just "ASUN"
 - say whether the result is text or binary
 - say whether the payload is flat rows, deep nesting, or a tiny single object
 - say whether the benchmark is throughput, latency, round-trip, encode only, or decode only
@@ -29,13 +29,13 @@ Use benchmark claims carefully:
 
 ## Current Ecosystem Notes
 
-| Language family | Notes |
-|-----------------|-------|
-| Rust | Most mature benchmark set in this repo; best source for detailed snapshots |
-| Go | Strong fit for repeated structs and service-style workloads |
-| Java | Good fit for managed-runtime structured data workloads |
-| Python | Benefits more from compact structure and schema reuse than from raw VM speed |
-| C / C++ / Zig | Good candidates for high-throughput native workloads |
+| Language family | Notes                                                                        |
+| --------------- | ---------------------------------------------------------------------------- |
+| Rust            | Most mature benchmark set in this repo; best source for detailed snapshots   |
+| Go              | Strong fit for repeated structs and service-style workloads                  |
+| Java            | Good fit for managed-runtime structured data workloads                       |
+| Python          | Benefits more from compact structure and schema reuse than from raw VM speed |
+| C / C++ / Zig   | Good candidates for high-throughput native workloads                         |
 
 ## Recommended Wording
 
@@ -47,7 +47,7 @@ Good:
 
 Avoid:
 
-- "ASON is always 7x faster than JSON."
+- "ASUN is always 7x faster than JSON."
 - "All language ports show the same parse speedup."
 - "Binary numbers prove text-mode performance."
 

@@ -1,6 +1,6 @@
 # Go Guide
 
-The Go implementation uses reflection and struct tags to map Go structs and slices to ASON text and binary formats.
+The Go implementation uses reflection and struct tags to map Go structs and slices to ASUN text and binary formats.
 
 ## Minimum Version
 
@@ -8,7 +8,7 @@ The Go implementation uses reflection and struct tags to map Go structs and slic
 
 ## Implementation Model
 
-- Struct fields use `ason:"name"` tags, with `json` tag fallback.
+- Struct fields use `asun:"name"` tags, with `json` tag fallback.
 - Text decode writes into an output pointer.
 - Binary decode also writes into an output pointer, because the binary format is not self-describing.
 
@@ -24,9 +24,9 @@ The Go implementation uses reflection and struct tags to map Go structs and slic
 
 ```go
 type User struct {
-    ID     int64  `ason:"id"`
-    Name   string `ason:"name"`
-    Active bool   `ason:"active"`
+    ID     int64  `asun:"id"`
+    Name   string `asun:"name"`
+    Active bool   `asun:"active"`
 }
 
 users := []User{
@@ -34,10 +34,10 @@ users := []User{
     {ID: 2, Name: "Bob", Active: false},
 }
 
-text, _ := ason.EncodeTyped(users)
+text, _ := asun.EncodeTyped(users)
 
 var out []User
-_ = ason.Decode(text, &out)
+_ = asun.Decode(text, &out)
 ```
 
 ## Notes
@@ -49,7 +49,7 @@ _ = ason.Decode(text, &out)
 ## Build and Test
 
 ```bash
-cd ason-go
+cd asun-go
 go test ./...
 go run ./examples/basic
 go run ./examples/complex

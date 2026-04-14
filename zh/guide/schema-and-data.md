@@ -1,30 +1,30 @@
 # Schema 与数据
 
-ASON 最重要的思想是：**Schema** 只描述一次结构，**数据** 只负责按顺序给值。
+ASUN 最重要的思想是：**Schema** 只描述一次结构，**数据** 只负责按顺序给值。
 
 ## 分离方式
 
 Schema：
 
-```ason
+```asun
 {name@str, age@int, active@bool}
 ```
 
 数据：
 
-```ason
+```asun
 (Alice, 30, true)
 ```
 
 合起来：
 
-```ason
+```asun
 {name@str, age@int, active@bool}:(Alice, 30, true)
 ```
 
 如果是列表，Schema 写一次，后面跟多条元组：
 
-```ason
+```asun
 [{name@str, age@int}]:
   (Alice, 30),
   (Bob,   25)
@@ -54,7 +54,7 @@ name@type
 
 例如：
 
-```ason
+```asun
 {profile@{id@int, name@str}}
 {tags@[str]}
 {attrs@[{key@str, value@str}]}
@@ -69,13 +69,13 @@ name@type
 
 简单字段名可以直接写：
 
-```ason
+```asun
 {id, name, active}
 ```
 
 如果字段名包含空格、以数字开头、或包含语法字符，就必须加引号：
 
-```ason
+```asun
 {"id uuid"@int, "65"@bool, "{}[]@\""@str}
 ```
 
@@ -85,33 +85,33 @@ name@type
 
 嵌套结构体的数据写成嵌套元组：
 
-```ason
+```asun
 {address@{city@str, zip@str}}:((Berlin, 10115))
 ```
 
 数组使用方括号：
 
-```ason
+```asun
 {tags@[str]}:([rust, go, zig])
 ```
 
 空槽表示 null / 缺失：
 
-```ason
+```asun
 {id@int, score@float}:(1, )
 ```
 
-## ASON 当前不做什么
+## ASUN 当前不做什么
 
-当前 ASON 文本格式**不支持**在数据区使用内联对象字面量：
+当前 ASUN 文本格式**不支持**在数据区使用内联对象字面量：
 
-```ason
-{user@{id@int}}:({id: 1})   // 不是当前 ASON
+```asun
+{user@{id@int}}:({id: 1})   // 不是当前 ASUN
 ```
 
 键值集合应建模为条目列表：
 
-```ason
+```asun
 {attrs@[{key@str, value@str}]}:([(lang, zig), (tier, prod)])
 ```
 

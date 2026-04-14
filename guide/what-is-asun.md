@@ -1,10 +1,10 @@
-# What is ASON?
+# What is ASUN?
 
-ASON stands for **Array-Schema Object Notation**.
+ASUN stands for **Array-Schema Unified Notation**.
 
 It is a serialization format built around one idea: declare schema once, then send rows as values only.
 
-```ason
+```asun
 [{id@int, name@str, active@bool}]:
   (1, Alice, true),
   (2, Bob,   false),
@@ -13,7 +13,7 @@ It is a serialization format built around one idea: declare schema once, then se
 
 ## Why It Exists
 
-ASON is designed for workloads where JSON repeats the same field names over and over:
+ASUN is designed for workloads where JSON repeats the same field names over and over:
 
 - LLM prompts and responses
 - internal APIs that move repeated records
@@ -22,10 +22,10 @@ ASON is designed for workloads where JSON repeats the same field names over and 
 
 ## Two Formats
 
-| Format | Best for |
-|--------|----------|
-| ASON text | human-readable exchange, LLMs, APIs |
-| ASON-BIN | internal runtime-to-runtime performance |
+| Format    | Best for                                |
+| --------- | --------------------------------------- |
+| ASUN text | human-readable exchange, LLMs, APIs     |
+| ASUN-BIN  | internal runtime-to-runtime performance |
 
 ## Core Properties
 
@@ -41,4 +41,4 @@ ASON is designed for workloads where JSON repeats the same field names over and 
 - better parsing characteristics than repeated-key JSON
 - implementation-specific speedups rather than one universal multiplier
 
-If you need the detailed comparison, continue to [Why ASON over JSON?](/guide/why-ason).
+If you need the detailed comparison, continue to [Why ASUN over JSON?](/guide/why-asun).

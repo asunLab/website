@@ -8,9 +8,9 @@ The C++ implementation is header-only and builds on compile-time metadata macros
 
 ## Implementation Model
 
-- Types declare schema metadata with `ASON_FIELDS(...)` and `ASON_TYPES(...)`.
+- Types declare schema metadata with `ASUN_FIELDS(...)` and `ASUN_TYPES(...)`.
 - Text and binary decode both use the target type `T`.
-- There is no standalone ASON `map` type. Use entry structs plus `std::vector`.
+- There is no standalone ASUN `map` type. Use entry structs plus `std::vector`.
 
 ## Current Support
 
@@ -24,7 +24,7 @@ Binary decode is not self-describing. You decode into a target type such as `dec
 ## Core API
 
 ```cpp
-#include "ason.hpp"
+#include "asun.hpp"
 
 std::string encode(const T &value);
 std::string encode_typed(const T &value);
@@ -46,21 +46,21 @@ struct User {
     std::string name;
     bool active;
 
-    ASON_FIELDS(id, name, active)
-    ASON_TYPES("int", "str", "bool")
+    ASUN_FIELDS(id, name, active)
+    ASUN_TYPES("int", "str", "bool")
 };
 ```
 
 ## Notes
 
 - The public schema surface still only uses `int`, `float`, `str`, and `bool`.
-- C++ metadata macros are the bridge between host types and common ASON wire format.
+- C++ metadata macros are the bridge between host types and common ASUN wire format.
 - For keyed data, use an entry type such as `struct Attr { std::string key; int64_t value; };`.
 
 ## Build and Test
 
 ```bash
-cd ason-cpp
+cd asun-cpp
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ctest --test-dir build --output-on-failure

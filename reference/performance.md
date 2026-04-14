@@ -1,10 +1,10 @@
 # Performance
 
-ASON has a structural performance advantage over JSON, but the multiplier depends on the implementation.
+ASUN has a structural performance advantage over JSON, but the multiplier depends on the implementation.
 
 ## What Usually Helps
 
-ASON parsers can:
+ASUN parsers can:
 
 - parse schema once
 - decode rows by schema order
@@ -31,12 +31,12 @@ The exact result depends on:
 
 So this site does not treat performance as one universal number.
 
-| Implementation style | Typical outcome |
-|----------------------|-----------------|
-| Native/system languages | Often the strongest gains |
-| Managed runtimes | Often strong on real workloads |
-| Dynamic runtimes | Can still be competitive on repetitive rows |
-| Less mature ports | May lag until tuned |
+| Implementation style    | Typical outcome                             |
+| ----------------------- | ------------------------------------------- |
+| Native/system languages | Often the strongest gains                   |
+| Managed runtimes        | Often strong on real workloads              |
+| Dynamic runtimes        | Can still be competitive on repetitive rows |
+| Less mature ports       | May lag until tuned                         |
 
 ## Practical Rules
 
@@ -63,7 +63,7 @@ Use [benchmark notes](/reference/benchmark-notes) for language-by-language inter
 ## Run Benchmarks
 
 ```bash
-cd ason-rs && cargo run --release --example bench
-cd ason-go && go test -bench=. -benchmem ./...
-cd ason-c && cmake -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build && ./build/examples/bench
+cd asun-rs && cargo run --release --example bench
+cd asun-go && go test -bench=. -benchmem ./...
+cd asun-c && cmake -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build && ./build/examples/bench
 ```

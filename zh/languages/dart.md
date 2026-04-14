@@ -1,6 +1,6 @@
 # Dart 指南
 
-Dart 版通过显式 `AsonSchema` 接口和 factory-based typed decode 工作。
+Dart 版通过显式 `AsunSchema` 接口和 factory-based typed decode 工作。
 
 ## 最低版本
 
@@ -8,7 +8,7 @@ Dart 版通过显式 `AsonSchema` 接口和 factory-based typed decode 工作。
 
 ## 实现方式
 
-- 用户类型实现 `AsonSchema`。
+- 用户类型实现 `AsunSchema`。
 - 文本解码既可以返回 field bag，也可以通过 `decodeWith` / `decodeListWith` 还原类型对象。
 - 二进制解码需要字段名、字段类型和 factory 函数。
 
@@ -22,7 +22,7 @@ Dart 版通过显式 `AsonSchema` 接口和 factory-based typed decode 工作。
 ## 示例
 
 ```dart
-class User implements AsonSchema {
+class User implements AsunSchema {
   final int id;
   final String name;
   final bool active;
@@ -44,7 +44,7 @@ class User implements AsonSchema {
 ## 构建与测试
 
 ```bash
-cd ason-dart
+cd asun-dart
 dart analyze
 dart test
 dart run example/basic.dart

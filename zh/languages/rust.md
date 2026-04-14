@@ -1,6 +1,6 @@
 # Rust 指南
 
-Rust 版是仓库里最成熟的一条 ASON 实现，也是最适合观察完整 API 形态的参考实现。
+Rust 版是仓库里最成熟的一条 ASUN 实现，也是最适合观察完整 API 形态的参考实现。
 
 ## 最低版本
 
@@ -24,7 +24,7 @@ Rust 版是仓库里最成熟的一条 ASON 实现，也是最适合观察完整
 ## 示例
 
 ```rust
-use ason::{decode, encode_typed, Result};
+use asun::{decode, encode_typed, Result};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
@@ -49,14 +49,14 @@ fn main() -> Result<()> {
 
 ## 说明
 
-- Rust 宿主侧常用 `i64`、`f64`，但对外 ASON schema 仍只有 `int`、`float`、`str`、`bool`。
+- Rust 宿主侧常用 `i64`、`f64`，但对外 ASUN schema 仍只有 `int`、`float`、`str`、`bool`。
 - 二进制解码依赖目标类型，不需要额外 schema 字符串。
 - 键值集合请显式建模成 entry struct。
 
 ## 构建与测试
 
 ```bash
-cd ason-rs
+cd asun-rs
 cargo test
 cargo run --release --example basic
 cargo run --release --example complex

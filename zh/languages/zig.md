@@ -28,25 +28,25 @@ const User = struct {
     active: bool,
 };
 
-const typed = try ason.encodeTyped(User, .{
+const typed = try asun.encodeTyped(User, .{
     .id = 1,
     .name = "Alice",
     .active = true,
 }, allocator);
 
-const restored = try ason.decode(User, typed, allocator);
+const restored = try asun.decode(User, typed, allocator);
 ```
 
 ## 说明
 
-- Zig 里 ASON `str` 常映射为 `[]const u8`。
-- 二进制解码依赖目标类型，因为 binary ASON 不内嵌 schema。
+- Zig 里 ASUN `str` 常映射为 `[]const u8`。
+- 二进制解码依赖目标类型，因为 binary ASUN 不内嵌 schema。
 - 键值集合请统一使用 entry struct，而不是 map 风格字段。
 
 ## 构建与测试
 
 ```bash
-cd ason-zig
+cd asun-zig
 zig build test
 zig build run-basic
 zig build run-complex

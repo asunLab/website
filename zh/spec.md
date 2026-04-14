@@ -1,6 +1,6 @@
-# ASON 格式规范
+# ASUN 格式规范
 
-本页是网站版的当前 ASON 简明规范，与本仓库中的实现保持一致。
+本页是网站版的当前 ASUN 简明规范，与本仓库中的实现保持一致。
 
 如果你需要更完整的边界规则和更多示例，请继续阅读：
 
@@ -10,17 +10,17 @@
 
 ## 核心形态
 
-ASON 把 **Schema** 与 **数据** 分开写。
+ASUN 把 **Schema** 与 **数据** 分开写。
 
 单个值：
 
-```ason
+```asun
 {id@int, name@str, active@bool}:(1, Alice, true)
 ```
 
 多行列表：
 
-```ason
+```asun
 [{id@int, name@str, active@bool}]:
   (1, Alice, true),
   (2, Bob, false)
@@ -52,7 +52,7 @@ name@type
 
 例如：
 
-```ason
+```asun
 {profile@{id@int, name@str}}
 {tags@[str]}
 {attrs@[{key@str, value@str}]}
@@ -69,7 +69,7 @@ name@type
 
 简单字段名可以不加引号：
 
-```ason
+```asun
 {id, name, active}
 ```
 
@@ -81,7 +81,7 @@ name@type
 
 就必须加引号：
 
-```ason
+```asun
 {"id uuid"@int, "65"@bool, "{}[]@\""@str}
 ```
 
@@ -91,7 +91,7 @@ name@type
 
 嵌套结构体的数据写成嵌套元组：
 
-```ason
+```asun
 {user@{id@int, name@str}}:((1, Alice))
 ```
 
@@ -101,7 +101,7 @@ name@type
 
 ### `int`
 
-```ason
+```asun
 42
 -7
 0
@@ -109,7 +109,7 @@ name@type
 
 ### `float`
 
-```ason
+```asun
 3.14
 -0.5
 1e10
@@ -117,7 +117,7 @@ name@type
 
 ### `bool`
 
-```ason
+```asun
 true
 false
 ```
@@ -126,13 +126,13 @@ false
 
 空槽表示 null / 缺失：
 
-```ason
+```asun
 {id@int, label@str}:(1, )
 ```
 
 ## 字符串
 
-ASON 有两种字符串形式。
+ASUN 有两种字符串形式。
 
 不带引号字符串：
 
@@ -148,7 +148,7 @@ ASON 有两种字符串形式。
 
 例如：
 
-```ason
+```asun
 Alice
 "Alice Smith"
 "  padded  "
@@ -157,15 +157,15 @@ Alice
 
 在 Schema 中，`@` 是结构语法；在数据中，`@` 只是普通内容。为避免歧义，值里出现 `@` 时应加引号：
 
-```ason
+```asun
 {name@str}:("@Alice")
 ```
 
 ## 注释
 
-ASON 支持块注释：
+ASUN 支持块注释：
 
-```ason
+```asun
 /* user list */
 [{id@int, name@str}]:
   (1, Alice),
@@ -176,15 +176,15 @@ ASON 支持块注释：
 
 ## 二进制说明
 
-ASON-BIN 不像文本 ASON 那样天然自描述。实际使用中，二进制解码通常需要外部 schema、目标类型或两端一致的字段布局。
+ASUN-BIN 不像文本 ASUN 那样天然自描述。实际使用中，二进制解码通常需要外部 schema、目标类型或两端一致的字段布局。
 
-适合文本 ASON 的场景：
+适合文本 ASUN 的场景：
 
 - 需要人工可读
 - 需要跨语言交换
 - 需要 payload 自带 schema
 
-适合 ASON-BIN 的场景：
+适合 ASUN-BIN 的场景：
 
 - 机器内部传输
 - 更紧凑的机器表示

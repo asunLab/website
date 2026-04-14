@@ -10,14 +10,14 @@ The PHP implementation is a native C++ extension that works with associative arr
 
 - Text encode infers schema from PHP arrays and values.
 - Text decode reads the schema embedded in the text and returns PHP arrays.
-- Binary decode requires an explicit schema argument because binary ASON is not self-describing.
+- Binary decode requires an explicit schema argument because binary ASUN is not self-describing.
 
 ## Current Support
 
-- `ason_encode`, `ason_encodeTyped`
-- `ason_encodePretty`, `ason_encodePrettyTyped`
-- `ason_decode`
-- `ason_encodeBinary`, `ason_decodeBinary`
+- `asun_encode`, `asun_encodeTyped`
+- `asun_encodePretty`, `asun_encodePrettyTyped`
+- `asun_decode`
+- `asun_encodeBinary`, `asun_decodeBinary`
 
 ## Example
 
@@ -27,26 +27,26 @@ $users = [
     ['id' => 2, 'name' => 'Bob', 'active' => false],
 ];
 
-$typed = ason_encodeTyped($users);
-$rows = ason_decode($typed);
+$typed = asun_encodeTyped($users);
+$rows = asun_decode($typed);
 
-$bin = ason_encodeBinary($users);
-$rows2 = ason_decodeBinary($bin, '[{id@int,name@str,active@bool}]');
+$bin = asun_encodeBinary($users);
+$rows2 = asun_decodeBinary($bin, '[{id@int,name@str,active@bool}]');
 ```
 
 ## Notes
 
-- `ason_decodeBinary` needs a schema argument.
+- `asun_decodeBinary` needs a schema argument.
 - For keyed data, keep using entry-list arrays such as `[{key@str,value@str}]`.
 
 ## Build and Test
 
 ```bash
-cd ason-php
+cd asun-php
 phpize
-./configure --enable-ason
+./configure --enable-asun
 make -j4
 make test REPORT_EXIT_STATUS=1 NO_INTERACTION=1
-php -d extension=modules/ason.so examples/basic.php
-php -d extension=modules/ason.so examples/bench.php
+php -d extension=modules/asun.so examples/basic.php
+php -d extension=modules/asun.so examples/bench.php
 ```

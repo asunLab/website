@@ -1,4 +1,4 @@
-name: Deploy ASON Website
+name: Deploy ASUN Website
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # 获取完整历史，用于 lastUpdated
+          fetch-depth: 0 # 获取完整历史，用于 lastUpdated
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

@@ -1,18 +1,18 @@
 # 语法参考
 
-ASON 当前文本语法的完整参考。
+ASUN 当前文本语法的完整参考。
 
 ## 文档形态
 
 单行单值：
 
-```ason
+```asun
 {id@int, name@str}:(1, Alice)
 ```
 
 多行列表：
 
-```ason
+```asun
 [{id@int, name@str}]:
   (1, Alice),
   (2, Bob)
@@ -24,12 +24,12 @@ ASON 当前文本语法的完整参考。
 
 ### 字段写法
 
-```ason
+```asun
 {id, name, active}
 {id@int, name@str, active@bool}
 ```
 
-在文本 ASON 中，`@` 是字段绑定符。基本类型提示是可选的。若出现，当前只允许：
+在文本 ASUN 中，`@` 是字段绑定符。基本类型提示是可选的。若出现，当前只允许：
 
 - `int`
 - `float`
@@ -44,7 +44,7 @@ ASON 当前文本语法的完整参考。
 
 例如：
 
-```ason
+```asun
 {profile@{id@int, name@str}}
 {tags@[str]}
 {attrs@[{key@str, value@str}]}
@@ -56,7 +56,7 @@ ASON 当前文本语法的完整参考。
 
 简单字段名可以不加引号：
 
-```ason
+```asun
 {id, name, active}
 ```
 
@@ -68,7 +68,7 @@ ASON 当前文本语法的完整参考。
 
 就必须加引号：
 
-```ason
+```asun
 {"id uuid"@int, "65"@bool, "{}[]@\""@str}
 ```
 
@@ -76,13 +76,13 @@ ASON 当前文本语法的完整参考。
 
 数据是位置型的，值严格按 Schema 顺序对应。
 
-```ason
+```asun
 {id@int, name@str, active@bool}:(1, Alice, true)
 ```
 
 嵌套结构体的数据写成嵌套元组：
 
-```ason
+```asun
 {user@{id@int, name@str}}:((1, Alice))
 ```
 
@@ -92,7 +92,7 @@ ASON 当前文本语法的完整参考。
 
 ### `int`
 
-```ason
+```asun
 42
 -7
 0
@@ -100,7 +100,7 @@ ASON 当前文本语法的完整参考。
 
 ### `float`
 
-```ason
+```asun
 3.14
 -0.5
 1e10
@@ -108,7 +108,7 @@ ASON 当前文本语法的完整参考。
 
 ### `bool`
 
-```ason
+```asun
 true
 false
 ```
@@ -117,7 +117,7 @@ false
 
 空槽表示 null / 缺失：
 
-```ason
+```asun
 {id@int, label@str}:(1, )
 ```
 
@@ -127,7 +127,7 @@ false
 
 简单值可以不加引号：
 
-```ason
+```asun
 Alice
 hello world
 ```
@@ -138,7 +138,7 @@ hello world
 - 出现保留语法字符时应改用引号
 - 值里若出现 `@`，应加引号，避免与 Schema 语法混淆
 
-```ason
+```asun
 {name@str}:("@Alice")
 ```
 
@@ -146,7 +146,7 @@ hello world
 
 需要保留空白或包含保留字符时使用引号：
 
-```ason
+```asun
 "value with, comma"
 "  leading spaces  "
 "line\nbreak"
@@ -156,7 +156,7 @@ hello world
 
 ## 数组
 
-```ason
+```asun
 [{name@str, scores@[int]}]:
   (Alice, [90, 85, 92]),
   (Bob,   [76, 88])
@@ -164,7 +164,7 @@ hello world
 
 也允许嵌套数组：
 
-```ason
+```asun
 [{matrix@[[int]]}]:
   ([[1, 2], [3, 4]])
 ```
@@ -173,16 +173,16 @@ hello world
 
 键值集合写成条目列表：
 
-```ason
+```asun
 [{name@str, attrs@[{key@str, value@int}]}]:
   (Alice, [(age, 30), (score, 95)])
 ```
 
 ## 注释
 
-ASON 支持块注释：
+ASUN 支持块注释：
 
-```ason
+```asun
 /* user list */
 [{id@int, name@str}]:
   (1, Alice),

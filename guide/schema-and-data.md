@@ -1,30 +1,30 @@
 # Schema & Data
 
-The most important ASON idea is that **schema** describes structure once, and **data** only supplies ordered values.
+The most important ASUN idea is that **schema** describes structure once, and **data** only supplies ordered values.
 
 ## The Split
 
 Schema:
 
-```ason
+```asun
 {name@str, age@int, active@bool}
 ```
 
 Data:
 
-```ason
+```asun
 (Alice, 30, true)
 ```
 
 Combined:
 
-```ason
+```asun
 {name@str, age@int, active@bool}:(Alice, 30, true)
 ```
 
 For a list, write the schema once and then multiple tuples:
 
-```ason
+```asun
 [{name@str, age@int}]:
   (Alice, 30),
   (Bob,   25)
@@ -54,7 +54,7 @@ Complex fields use the same `@` as a required structural binding:
 
 Examples:
 
-```ason
+```asun
 {profile@{id@int, name@str}}
 {tags@[str]}
 {attrs@[{key@str, value@str}]}
@@ -69,13 +69,13 @@ This means:
 
 Plain field names work for simple identifiers:
 
-```ason
+```asun
 {id, name, active}
 ```
 
 Quoted field names are required when a field name contains spaces, starts with digits, or contains syntax characters:
 
-```ason
+```asun
 {"id uuid"@int, "65"@bool, "{}[]@\""@str}
 ```
 
@@ -85,33 +85,33 @@ Data is positional, not keyed. The first value matches the first field, the seco
 
 Nested struct data uses nested tuples:
 
-```ason
+```asun
 {address@{city@str, zip@str}}:((Berlin, 10115))
 ```
 
 Arrays use square brackets:
 
-```ason
+```asun
 {tags@[str]}:([rust, go, zig])
 ```
 
 An empty slot represents null / missing:
 
-```ason
+```asun
 {id@int, score@float}:(1, )
 ```
 
-## What ASON Does Not Do
+## What ASUN Does Not Do
 
-Current ASON text does **not** use inline object literals in the data section:
+Current ASUN text does **not** use inline object literals in the data section:
 
-```ason
-{user@{id@int}}:({id: 1})   // not current ASON
+```asun
+{user@{id@int}}:({id: 1})   // not current ASUN
 ```
 
 Write key-value collections as entry lists:
 
-```ason
+```asun
 {attrs@[{key@str, value@str}]}:([(lang, zig), (tier, prod)])
 ```
 

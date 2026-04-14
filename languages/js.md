@@ -23,18 +23,18 @@ The JavaScript / TypeScript implementation works with plain objects and arrays a
 ## Example
 
 ```ts
-import { encodeTyped, decode, encodeBinary, decodeBinary } from 'ason-js';
+import { encodeTyped, decode, encodeBinary, decodeBinary } from "asun-js";
 
 const users = [
-  { id: 1, name: 'Alice', active: true },
-  { id: 2, name: 'Bob', active: false },
+  { id: 1, name: "Alice", active: true },
+  { id: 2, name: "Bob", active: false },
 ];
 
 const text = encodeTyped(users);
 const rows = decode(text);
 
 const blob = encodeBinary(users);
-const rows2 = decodeBinary(blob, '[{id@int,name@str,active@bool}]');
+const rows2 = decodeBinary(blob, "[{id@int,name@str,active@bool}]");
 ```
 
 ## Notes
@@ -46,7 +46,7 @@ const rows2 = decodeBinary(blob, '[{id@int,name@str,active@bool}]');
 ## Build and Test
 
 ```bash
-cd ason-js
+cd asun-js
 npm install
 npm test
 npm run build

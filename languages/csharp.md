@@ -9,21 +9,21 @@ The .NET implementation uses an explicit schema interface plus factory-based typ
 
 ## Implementation Model
 
-- Types can implement `IAsonSchema` to expose field names, field types, and field values.
+- Types can implement `IAsunSchema` to expose field names, field types, and field values.
 - Text decode can return a field bag or use a factory function for typed objects.
-- Binary decode requires field names, field types, and a factory because binary ASON is not self-describing.
+- Binary decode requires field names, field types, and a factory because binary ASUN is not self-describing.
 
 ## Current Support
 
-- `Ason.encode`, `Ason.encodeTyped`
-- `Ason.encodePretty`, `Ason.encodePrettyTyped`
-- `Ason.decode`, `Ason.decodeWith`, `Ason.decodeListWith`
-- `Ason.encodeBinary`, `Ason.decodeBinaryWith`
+- `Asun.encode`, `Asun.encodeTyped`
+- `Asun.encodePretty`, `Asun.encodePrettyTyped`
+- `Asun.decode`, `Asun.decodeWith`, `Asun.decodeListWith`
+- `Asun.encodeBinary`, `Asun.decodeBinaryWith`
 
 ## Example
 
 ```csharp
-record User(long Id, string Name, bool Active) : IAsonSchema
+record User(long Id, string Name, bool Active) : IAsunSchema
 {
     static readonly string[] Names = ["id", "name", "active"];
     static readonly string?[] Types = ["int", "str", "bool"];
@@ -43,8 +43,8 @@ record User(long Id, string Name, bool Active) : IAsonSchema
 ## Build and Test
 
 ```bash
-cd ason-cs
-dotnet test tests/Ason.Tests/Ason.Tests.csproj -f net10.0
-dotnet run --project examples/Basic/Ason.Examples.Basic.csproj -f net10.0
-dotnet run --project examples/Bench/Ason.Examples.Bench.csproj -f net10.0
+cd asun-cs
+dotnet test tests/Asun.Tests/Asun.Tests.csproj -f net10.0
+dotnet run --project examples/Basic/Asun.Examples.Basic.csproj -f net10.0
+dotnet run --project examples/Bench/Asun.Examples.Bench.csproj -f net10.0
 ```

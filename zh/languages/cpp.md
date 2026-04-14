@@ -8,9 +8,9 @@ C++ 版是 header-only 实现，依靠编译期元数据宏而不是运行时反
 
 ## 实现方式
 
-- 类型通过 `ASON_FIELDS(...)` 和 `ASON_TYPES(...)` 声明 schema 元数据。
+- 类型通过 `ASUN_FIELDS(...)` 和 `ASUN_TYPES(...)` 声明 schema 元数据。
 - 文本与二进制解码都依赖目标类型 `T`。
-- ASON 没有独立 `map` 类型；键值集合请用 entry struct + `std::vector`。
+- ASUN 没有独立 `map` 类型；键值集合请用 entry struct + `std::vector`。
 
 ## 当前支持
 
@@ -24,7 +24,7 @@ C++ 版是 header-only 实现，依靠编译期元数据宏而不是运行时反
 ## 核心 API
 
 ```cpp
-#include "ason.hpp"
+#include "asun.hpp"
 
 std::string encode(const T &value);
 std::string encode_typed(const T &value);
@@ -46,21 +46,21 @@ struct User {
     std::string name;
     bool active;
 
-    ASON_FIELDS(id, name, active)
-    ASON_TYPES("int", "str", "bool")
+    ASUN_FIELDS(id, name, active)
+    ASUN_TYPES("int", "str", "bool")
 };
 ```
 
 ## 说明
 
 - 对外 schema 仍然只使用 `int`、`float`、`str`、`bool`。
-- 元数据宏是 C++ 宿主类型和公共 ASON wire format 之间的桥。
+- 元数据宏是 C++ 宿主类型和公共 ASUN wire format 之间的桥。
 - 键值集合请显式建模成 entry type。
 
 ## 构建与测试
 
 ```bash
-cd ason-cpp
+cd asun-cpp
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ctest --test-dir build --output-on-failure

@@ -20,20 +20,20 @@ JVM 版以 Java 为主，同时在同一个 artifact 中附带 Kotlin helper。
 - 二进制编解码
 - 列表、嵌套类、可空字段、entry-list 键值集合
 
-ASON 不再提供独立 `map` 类型。键值集合请统一建模为 `List<Entry>`。
+ASUN 不再提供独立 `map` 类型。键值集合请统一建模为 `List<Entry>`。
 
 ## 核心 API
 
 ```java
-String text = Ason.encode(user);
-String typed = Ason.encodeTyped(user);
-String pretty = Ason.encodePrettyTyped(user);
+String text = Asun.encode(user);
+String typed = Asun.encodeTyped(user);
+String pretty = Asun.encodePrettyTyped(user);
 
-User restored = Ason.decode(text, User.class);
-List<User> rows = Ason.decodeList(text, User.class);
+User restored = Asun.decode(text, User.class);
+List<User> rows = Asun.decodeList(text, User.class);
 
-byte[] bin = Ason.encodeBinary(user);
-User restored2 = Ason.decodeBinary(bin, User.class);
+byte[] bin = Asun.encodeBinary(user);
+User restored2 = Asun.decodeBinary(bin, User.class);
 ```
 
 ## Kotlin Helper
@@ -45,14 +45,14 @@ val rows: List<User> = decodeList(text)
 
 ## 说明
 
-- Java / Kotlin 对外暴露的 ASON schema 名同样只有 `int`、`float`、`str`、`bool`。
-- 二进制解码依赖目标类，因为 binary ASON 不内嵌 schema。
+- Java / Kotlin 对外暴露的 ASUN schema 名同样只有 `int`、`float`、`str`、`bool`。
+- 二进制解码依赖目标类，因为 binary ASUN 不内嵌 schema。
 - 如果要表达键值集合，请使用 entry object 列表，而不是 `Map<K, V>`。
 
 ## 构建与测试
 
 ```bash
-cd ason-java
+cd asun-java
 ./gradlew test
 ./gradlew runBasicExample
 ./gradlew runComplexExample

@@ -11,7 +11,7 @@ The Python implementation is a compiled extension module that works with Python 
 
 - Text encoding infers schema from Python values.
 - `decode()` reads the schema carried by the text header and returns Python objects.
-- `decodeBinary()` needs an explicit schema string because binary ASON is not self-describing.
+- `decodeBinary()` needs an explicit schema string because binary ASUN is not self-describing.
 
 ## Current Support
 
@@ -23,18 +23,18 @@ The Python implementation is a compiled extension module that works with Python 
 ## Example
 
 ```python
-import ason
+import asun
 
 users = [
     {"id": 1, "name": "Alice", "active": True},
     {"id": 2, "name": "Bob", "active": False},
 ]
 
-typed = ason.encodeTyped(users)
-restored = ason.decode(typed)
+typed = asun.encodeTyped(users)
+restored = asun.decode(typed)
 
-blob = ason.encodeBinary(users)
-restored2 = ason.decodeBinary(blob, "[{id@int,name@str,active@bool}]")
+blob = asun.encodeBinary(users)
+restored2 = asun.decodeBinary(blob, "[{id@int,name@str,active@bool}]")
 ```
 
 ## Notes
@@ -46,7 +46,7 @@ restored2 = ason.decodeBinary(blob, "[{id@int,name@str,active@bool}]")
 ## Build and Test
 
 ```bash
-cd ason-py
+cd asun-py
 python3 -m pip install -e .
 python3 -m pytest tests -v
 python3 examples/basic.py

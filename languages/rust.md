@@ -1,6 +1,6 @@
 # Rust Guide
 
-Rust is the most mature ASON implementation in the repository and the best reference for the full API surface.
+Rust is the most mature ASUN implementation in the repository and the best reference for the full API surface.
 
 ## Minimum Version
 
@@ -24,7 +24,7 @@ Rust is the most mature ASON implementation in the repository and the best refer
 ## Example
 
 ```rust
-use ason::{decode, encode_typed, Result};
+use asun::{decode, encode_typed, Result};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
@@ -49,14 +49,14 @@ fn main() -> Result<()> {
 
 ## Notes
 
-- Rust uses host types such as `i64` and `f64`, but the ASON schema still only exposes `int`, `float`, `bool`, and `str`.
+- Rust uses host types such as `i64` and `f64`, but the ASUN schema still only exposes `int`, `float`, `bool`, and `str`.
 - Binary decode requires the target type, not a schema string.
 - Keyed collections should be explicit entry structs.
 
 ## Build and Test
 
 ```bash
-cd ason-rs
+cd asun-rs
 cargo test
 cargo run --release --example basic
 cargo run --release --example complex

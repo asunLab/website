@@ -1,6 +1,6 @@
 # LLM Integration
 
-ASON was designed from the ground up for use in LLM (Large Language Model) workflows. This page explains why it works better than JSON for structured model output.
+ASUN was designed from the ground up for use in LLM (Large Language Model) workflows. This page explains why it works better than JSON for structured model output.
 
 ## The Problem with JSON + LLMs
 
@@ -13,13 +13,13 @@ When you ask an LLM to return structured data as JSON, several failure modes are
 
 Even with function calling / tool use, JSON-based structured output has high failure rates on complex schemas.
 
-## Why ASON Works Better
+## Why ASUN Works Better
 
 ### 1. Less to get wrong
 
-ASON requires fewer special characters. Most string values are unquoted:
+ASUN requires fewer special characters. Most string values are unquoted:
 
-```ason
+```asun
 [{name@str, role@str}]:
   (Alice, admin),
   (Bob,   viewer)
@@ -32,7 +32,7 @@ No quotes around `Alice`, `admin`, `viewer`. No commas inside value strings unle
 Include the schema once in the system prompt or as a header:
 
 ```
-Respond with ASON using this schema:
+Respond with ASUN using this schema:
 [{id@int, name@str, sentiment@str, score@float}]
 
 Example@[{id@int, name@str, sentiment@str, score@float}]:
@@ -51,21 +51,21 @@ With 65% fewer tokens than equivalent JSON, you can fit 3× as many data rows in
 
 ### Rough token comparison for 100 records
 
-| Format | Tokens (approx) |
-|--------|----------------|
-| JSON   | ~3 000          |
-| ASON   | ~1 050          |
-| ASON-BIN (not LLM-usable) | — |
+| Format                    | Tokens (approx) |
+| ------------------------- | --------------- |
+| JSON                      | ~3 000          |
+| ASUN                      | ~1 050          |
+| ASUN-BIN (not LLM-usable) | —               |
 
 ### 4. Streaming-friendly
 
-ASON's row-oriented format means each tuple `(...)` is a self-contained unit. Clients can begin parsing results as they stream in — you don't need to wait for the closing `}` of a JSON array.
+ASUN's row-oriented format means each tuple `(...)` is a self-contained unit. Clients can begin parsing results as they stream in — you don't need to wait for the closing `}` of a JSON array.
 
 ## Recommended Prompt Pattern
 
 ```
 ## Output format
-Use ASON with the schema below. Output ONLY the ASON block, no explanation.
+Use ASUN with the schema below. Output ONLY the ASUN block, no explanation.
 
 Schema:
 {field1, field2@int, nested@{child}, items@[str], ...}
@@ -75,22 +75,23 @@ Schema:
 ```
 
 For structured extraction with validation, use a library wrapper that:
+
 1. Sends the schema in the prompt
-2. Parses the ASON response
-3. Retries once on parse error (rare with ASON)
+2. Parses the ASUN response
+3. Retries once on parse error (rare with ASUN)
 
 ## Example: Sentiment Analysis Pipeline
 
 ```python
 import openai
-import ason
+import asun
 
 SCHEMA = "[{id@int, sentiment@str, score@float}]"
 
 def analyze(reviews: list[str]) -> list[dict]:
     numbered = "\n".join(f"{i+1}. {r}" for i, r in enumerate(reviews))
     prompt = f"""Analyze sentiment for each review.
-Respond ONLY with ASON using this schema:
+Respond ONLY with ASUN using this schema:
 {SCHEMA}
 
 Reviews:
@@ -100,5 +101,5 @@ Reviews:
         model="gpt-4o",
         messages=[{"role": "user", "content": prompt}],
     )
-    return ason.decode(resp.choices[0].message.content)
+    return asun.decode(resp.choices[0].message.content)
 ```

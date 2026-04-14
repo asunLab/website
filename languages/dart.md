@@ -1,6 +1,6 @@
 # Dart Guide
 
-The Dart implementation uses an explicit `AsonSchema` interface and factory-based typed decode helpers.
+The Dart implementation uses an explicit `AsunSchema` interface and factory-based typed decode helpers.
 
 ## Minimum Version
 
@@ -8,7 +8,7 @@ The Dart implementation uses an explicit `AsonSchema` interface and factory-base
 
 ## Implementation Model
 
-- User types implement `AsonSchema`.
+- User types implement `AsunSchema`.
 - Text decode can return a field bag or use `decodeWith` / `decodeListWith` for typed values.
 - Binary decode requires field names, field types, and a factory function.
 
@@ -22,7 +22,7 @@ The Dart implementation uses an explicit `AsonSchema` interface and factory-base
 ## Example
 
 ```dart
-class User implements AsonSchema {
+class User implements AsunSchema {
   final int id;
   final String name;
   final bool active;
@@ -44,7 +44,7 @@ class User implements AsonSchema {
 ## Build and Test
 
 ```bash
-cd ason-dart
+cd asun-dart
 dart analyze
 dart test
 dart run example/basic.dart
