@@ -2,9 +2,6 @@ import { defineConfig } from 'vitepress'
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
 
-// 本地开发: /
-// GitHub 项目页: /asun/  (由 CI 通过 VITE_BASE 环境变量注入)
-// 自定义域名: /
 const BASE = process.env.VITE_BASE ?? '/'
 const withBase = (path: string) =>
   `${BASE.replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`
