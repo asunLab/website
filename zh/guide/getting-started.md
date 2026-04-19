@@ -6,7 +6,7 @@
 
 ```toml
 [dependencies]
-asun = "0.1"
+asun = "1.0"
 serde = { version = "1", features = ["derive"] }
 ```
 
@@ -74,8 +74,7 @@ func main() {
 ## Python
 
 ```bash
-cd asun-py
-python3 -m pip install -e .
+pip install asun
 ```
 
 ```python

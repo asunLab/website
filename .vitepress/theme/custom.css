@@ -1,3 +1,43 @@
+/* ── Apple-inspired color theme ── */
+
+:root {
+  --vp-c-brand-1: #007AFF;
+  --vp-c-brand-2: #0066DD;
+  --vp-c-brand-3: #0055BB;
+  --vp-c-brand-soft: rgba(0, 122, 255, 0.14);
+
+  --vp-button-brand-bg: #007AFF;
+  --vp-button-brand-hover-bg: #0066DD;
+  --vp-button-brand-active-bg: #0055BB;
+  --vp-button-brand-border: transparent;
+  --vp-button-brand-text: #fff;
+  --vp-button-brand-hover-border: transparent;
+  --vp-button-brand-hover-text: #fff;
+  --vp-button-brand-active-border: transparent;
+  --vp-button-brand-active-text: #fff;
+
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(135deg, #007AFF 0%, #00C7FF 100%);
+  --vp-home-hero-image-background-image: linear-gradient(135deg, rgba(0, 122, 255, 0.2) 0%, rgba(0, 199, 255, 0.2) 100%);
+  --vp-home-hero-image-filter: blur(44px);
+}
+
+.dark {
+  --vp-c-brand-1: #0A84FF;
+  --vp-c-brand-2: #409CFF;
+  --vp-c-brand-3: #007AFF;
+  --vp-c-brand-soft: rgba(10, 132, 255, 0.16);
+
+  --vp-button-brand-bg: #0A84FF;
+  --vp-button-brand-hover-bg: #409CFF;
+  --vp-button-brand-active-bg: #007AFF;
+
+  --vp-home-hero-name-background: linear-gradient(135deg, #0A84FF 0%, #5AC8FA 100%);
+  --vp-home-hero-image-background-image: linear-gradient(135deg, rgba(10, 132, 255, 0.25) 0%, rgba(90, 200, 250, 0.25) 100%);
+}
+
+/* ── Converter page layout ── */
+
 .converter-page .vp-doc {
   max-width: 100% !important;
 }

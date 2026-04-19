@@ -136,6 +136,9 @@ const outputChars = computed(() => countNoSpace(output.value))
 <style scoped>
 .converter-root {
   margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 130px);
 }
 
 .toolbar {
@@ -202,6 +205,7 @@ const outputChars = computed(() => countNoSpace(output.value))
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
+  flex: 1;
 }
 
 @media (max-width: 768px) {
@@ -246,7 +250,8 @@ const outputChars = computed(() => countNoSpace(output.value))
 
 .editor {
   width: 100%;
-  min-height: 520px;
+  flex: 1;
+  min-height: 300px;
   padding: 12px;
   border: 1px solid var(--vp-c-divider);
   border-radius: 8px;

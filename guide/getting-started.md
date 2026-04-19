@@ -6,7 +6,7 @@ Pick your language below for a quick first round-trip.
 
 ```toml
 [dependencies]
-asun = "0.1"
+asun = "1.0"
 serde = { version = "1", features = ["derive"] }
 ```
 
@@ -74,8 +74,7 @@ See the full [Go guide](/languages/go).
 ## Python
 
 ```bash
-cd asun-py
-python3 -m pip install -e .
+pip install asun
 ```
 
 ```python

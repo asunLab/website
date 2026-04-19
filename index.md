@@ -86,7 +86,7 @@ Schema is written once. Each row after `:` is pure data. That is where most of A
 
 ```toml [Rust]
 [dependencies]
-asun = "0.1"
+asun = "1.0"
 serde = { version = "1", features = ["derive"] }
 ```
 
@@ -95,8 +95,49 @@ go get github.com/asunLab/asun-go
 ```
 
 ```bash [Python]
-cd asun-py
-python3 -m pip install -e .
+pip install asun
+```
+
+```bash [JS / TS]
+npm i @athanx/asun
+```
+
+```bash [Java]
+implementation 'io.asun:asun:1.0.0'
+```
+
+```swift [Swift]
+// Package.swift
+.package(url: "https://github.com/asunLab/asun-swift", from: "1.0.0")
+```
+
+```bash [C#]
+dotnet add package Asun
+```
+
+```yaml [Dart]
+# pubspec.yaml
+dependencies:
+  asun: ^1.0.0
+```
+
+```bash [PHP]
+pecl install asun
+```
+
+```c [C]
+// Header-only: include asun.h + link asun.c
+#include "asun.h"
+```
+
+```cmake [C++]
+# Header-only or via Conan
+find_package(asun-cpp REQUIRED)
+```
+
+```zig [Zig]
+// build.zig.zon — add asun dependency
+zig fetch https://github.com/asunLab/asun-zig/archive/v1.0.0.tar.gz --save
 ```
 
 :::

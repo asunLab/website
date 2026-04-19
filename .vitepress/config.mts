@@ -6,6 +6,8 @@ import { resolve } from 'path'
 // GitHub 项目页: /asun/  (由 CI 通过 VITE_BASE 环境变量注入)
 // 自定义域名: /
 const BASE = process.env.VITE_BASE ?? '/'
+const withBase = (path: string) =>
+  `${BASE.replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`
 
 const asunGrammar = JSON.parse(
   readFileSync(
@@ -172,13 +174,13 @@ export default defineConfig({
   titleTemplate: ':title — ASUN',
 
   head: [
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }],
-    ['meta', { name: 'theme-color', content: '#646cff' }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: withBase('/logo.svg') }],
+    ['meta', { name: 'theme-color', content: '#007AFF' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:site_name', content: 'ASUN' }],
-    ['meta', { property: 'og:image', content: '/og-image.png' }],
+    ['meta', { property: 'og:image', content: withBase('/og-image.png') }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
-    ['meta', { name: 'twitter:image', content: '/og-image.png' }],
+    ['meta', { name: 'twitter:image', content: withBase('/og-image.png') }],
   ],
 
   sitemap: {
@@ -249,7 +251,7 @@ export default defineConfig({
   },
 
   themeConfig: {
-    logo: '/logo.svg',
+    logo: withBase('/logo.svg'),
     siteTitle: 'ASUN',
 
     socialLinks: [

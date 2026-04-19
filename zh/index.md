@@ -86,7 +86,7 @@ Schema 只写一次，`:` 后面每一行都是纯数据。ASUN 的大部分 tok
 
 ```toml [Rust]
 [dependencies]
-asun = "0.1"
+asun = "1.0"
 serde = { version = "1", features = ["derive"] }
 ```
 
@@ -95,8 +95,49 @@ go get github.com/asunLab/asun-go
 ```
 
 ```bash [Python]
-cd asun-py
-python3 -m pip install -e .
+pip install asun
+```
+
+```bash [JS / TS]
+npm install @athanx/asun
+```
+
+```bash [Java]
+implementation 'io.asun:asun:1.0.0'
+```
+
+```swift [Swift]
+// Package.swift
+.package(url: "https://github.com/asunLab/asun-swift", from: "1.0.0")
+```
+
+```bash [C#]
+dotnet add package Asun
+```
+
+```yaml [Dart]
+# pubspec.yaml
+dependencies:
+  asun: ^1.0.0
+```
+
+```bash [PHP]
+pecl install asun
+```
+
+```c [C]
+// 头文件方式：引入 asun.h + 链接 asun.c
+#include "asun.h"
+```
+
+```cmake [C++]
+# 头文件方式或通过 Conan
+find_package(asun-cpp REQUIRED)
+```
+
+```zig [Zig]
+// build.zig.zon — 添加 asun 依赖
+zig fetch https://github.com/asunLab/asun-zig/archive/v1.0.0.tar.gz --save
 ```
 
 :::
