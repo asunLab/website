@@ -39,7 +39,7 @@ See the full [Rust guide](/languages/rust).
 ## Go
 
 ```bash
-go get github.com/asun-lab/asun-go
+go get github.com/asunLab/asun-go
 ```
 
 ```go
@@ -47,7 +47,7 @@ package main
 
 import (
     "fmt"
-    asun "github.com/asun-lab/asun-go"
+    asun "github.com/asunLab/asun-go"
 )
 
 type User struct {

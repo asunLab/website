@@ -17,7 +17,7 @@ hero:
       link: /guide/why-asun
     - theme: alt
       text: View on GitHub
-      link: https://github.com/asun-lab/asun
+      link: https://github.com/asunLab/asun
 
 features:
   - icon: 🚀
@@ -91,7 +91,7 @@ serde = { version = "1", features = ["derive"] }
 ```
 
 ```bash [Go]
-go get github.com/asun-lab/asun-go
+go get github.com/asunLab/asun-go
 ```
 
 ```bash [Python]

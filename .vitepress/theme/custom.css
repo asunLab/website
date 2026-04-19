@@ -1,0 +1,16 @@
+.converter-page .vp-doc {
+  max-width: 100% !important;
+}
+
+.converter-page .VPContent .VPDoc .container {
+  max-width: 100% !important;
+}
+
+.converter-page .VPDoc .content-container,
+.converter-page .VPDoc .container .content {
+  max-width: 100% !important;
+}
+
+.converter-page .content-container {
+  max-width: 100% !important;
+}
