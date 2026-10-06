@@ -115,8 +115,8 @@ Integers are `-?[0-9]+`. Floats must either contain a decimal point with digits 
 
 ## Binary Note
 
-ASUN-BIN may use fixed-width host-language primitives internally, but those widths are **not** extra schema names.
+ASUN-BIN maps values to host-language primitives such as `i32` or `f64`, but those widths are **not** extra schema names.
 
 - The public schema still only uses `int`, `float`, `bool`, and `str`.
-- Binary encoding is little-endian across the official implementations.
-- Fixed-width storage details belong to the binary codec implementation, not to the schema surface.
+- Integers are varints on the wire; only floats are fixed-width, in little-endian byte order.
+- Storage widths belong to the binary codec implementation, not to the schema surface.

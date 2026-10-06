@@ -31,21 +31,20 @@ For implementation-level notes, see [benchmark notes](/reference/benchmark-notes
 
 ## Wire Model
 
-All integers are little-endian. Strings are length-prefixed.
+Integers are LEB128 varints (signed ones zigzag-encoded first), floats are fixed-width little-endian, and strings and sequences are length-prefixed. See [SPEC §11](https://github.com/asunLab/asun/blob/main/docs/SPEC.md#11-asun-binary-format-specification) for the byte-level rules and the limits a decoder must enforce on untrusted input.
 
-| Type             | Encoding                   |
-| ---------------- | -------------------------- |
-| `bool`           | 1 byte                     |
-| `i8` / `u8`      | 1 byte                     |
-| `i16` / `u16`    | 2 bytes LE                 |
-| `i32` / `u32`    | 4 bytes LE                 |
-| `i64` / `u64`    | 8 bytes LE                 |
-| `f32`            | 4 bytes LE                 |
-| `f64`            | 8 bytes LE                 |
-| `str` / `String` | `[u32 len][UTF-8 bytes]`   |
-| `Option<T>`      | `[tag][payload]`           |
-| `Vec<T>`         | `[u32 count][elements...]` |
-| `struct`         | fields in schema order     |
+| Type                  | Encoding                                         |
+| --------------------- | ------------------------------------------------ |
+| `bool`                | 1 byte, `0x00` / `0x01`                          |
+| `i8` / `u8`           | 1 raw byte                                       |
+| `i16` / `i32` / `i64` | zigzag + varint                                  |
+| `u16` / `u32` / `u64` | varint                                           |
+| `f32` / `f64`         | 4 / 8 bytes LE                                   |
+| `str` / `String`      | `[varint len][UTF-8 bytes]`                      |
+| `Option<T>`           | `[0x00]` or `[0x01][payload]`                    |
+| `Vec<T>`              | `[varint count][elements...]`                    |
+| `struct`              | fields in declaration order                      |
+| `enum` (Rust)         | `[varint variant index][fields...]`              |
 
 Binary payloads are not self-describing in the same way as text ASUN. In practice, decoding usually needs:
 
