@@ -17,7 +17,7 @@ JSON repeats field names for every object in an array. With 1 000 rows and 5 fie
 ```
 
 ```asun
-// ASUN — ~35 tokens (65% reduction)
+/* ASUN — ~35 tokens (65% reduction) */
 [{id@int, name@str, active@bool}]:
   (1, Alice, true),
   (2, Bob,   false)

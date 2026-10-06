@@ -135,7 +135,7 @@ An empty slot inside a tuple or array means null / absent:
 {id@int, label@str}:(1, )
 ```
 
-A trailing comma is ignored; a doubled comma adds a null. For example, `(a,b,)` has two values, while `(a,b,,)` has three.
+A comma is a pure separator: `n` commas make `n + 1` slots, so a final comma adds a null. `(a,b,)` has three values and `(,)` has two nulls. `null` is also a keyword (`"null"` is the string). An array holding a single null is written `[null]`, because `[]` is empty.
 
 ## Strings
 
@@ -145,15 +145,16 @@ Unquoted strings:
 
 - work for simple values
 - are trimmed at the outer edges
-- may contain raw `/`, `<`, and `>`
-- must not contain raw `, ( ) [ ] { } : @ " \` or control characters
+- may contain raw `:`, `@`, `/`, `*`, `<`, and `>` (`alice@example.com`, `12:30`, `https://a.com`)
+- must not contain raw `, ( ) [ ] { } " \` or control characters
 - treat `/*` as a block comment opener, not as string content
 
 Quoted strings:
 
 - preserve whitespace
 - allow reserved characters
-- support escapes such as `\"`, `\\`, `\n`, `\t`, `\r`, `\b`, `\f`, structural escapes, and `\uXXXX`
+- follow JSON rules: `"`, `\` and control characters must be escaped
+- support escapes such as `\"`, `\\`, `\/`, `\n`, `\t`, `\r`, `\b`, `\f`, structural escapes, and `\uXXXX`
 
 Examples:
 
@@ -164,11 +165,13 @@ Alice
 "value with, comma"
 ```
 
-In schema, `@` is structural syntax. In unquoted data strings, raw `@` is reserved, so values containing `@` should be quoted or escaped:
+In schema, `@` is structural syntax. In data, `@` and `:` are ordinary characters:
 
 ```asun
-{name@str}:("@Alice")
+{name@str, email@str, at@str}:(@Alice, alice@example.com, 12:30)
 ```
+
+Keywords (`true`, `false`, `null`) and type names (`int`, `float`, `str`, `bool`) are case-sensitive: `TRUE` is a string and `@INT` is an error.
 
 ## Comments
 
@@ -183,7 +186,7 @@ ASUN supports block comments wherever optional whitespace is allowed:
 
 Line comments are not part of the format.
 
-Comments inside tuples `(...)` or array literals `[...]` are not valid conformance inputs.
+Comments are layout, like whitespace: they may appear between any two tokens, including inside tuples and arrays, but never inside a quoted string, plain string, number or keyword. Outside quotes, `/*` always opens a comment, so `(x /* note */)` is the string `x`.
 
 ## Binary Note
 

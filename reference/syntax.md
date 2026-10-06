@@ -135,7 +135,7 @@ An empty slot inside a tuple or array means null / absent:
 [1,,3]
 ```
 
-A trailing comma is absorbed; it does not add a null. Use a doubled comma for a final null: `(a,b,,)`.
+A comma is a pure separator: `n` commas make `n + 1` slots, so a final comma adds a null. `(a,b,)` has three values and `(,)` has two nulls. `null` is also a keyword (`"null"` is the string). An array holding a single null is written `[null]`, because `[]` is empty.
 
 ## Strings
 
@@ -151,13 +151,13 @@ hello world
 Rules:
 
 - outer whitespace is trimmed
-- raw `, ( ) [ ] { } : @ " \` and control characters are not allowed
-- raw `/`, `<`, and `>` are allowed, but `/*` starts a block comment
+- raw `, ( ) [ ] { } " \` and control characters are not allowed
+- raw `:`, `@`, `/`, `*`, `<`, and `>` are allowed, but `/*` starts a block comment
 - quote or escape reserved syntax characters
 
 ```asun
 {path@str}:(path/to/file)
-{name@str}:("@Alice")
+{name@str, email@str, url@str}:(@Alice, alice@example.com, https://a.com/x)
 ```
 
 ### Quoted strings
@@ -170,7 +170,7 @@ Use quotes when you need to preserve whitespace or include reserved characters:
 "line\nbreak"
 ```
 
-Supported escapes are `\"`, `\\`, `\n`, `\t`, `\r`, `\b`, `\f`, `\,`, `\(`, `\)`, `\[`, `\]`, `\{`, `\}`, `\:`, `\@`, and `\uXXXX`.
+Quoted strings follow JSON: `"`, `\` and control characters (U+0000–U+001F) must be escaped. Supported escapes are `\"`, `\\`, `\/`, `\n`, `\t`, `\r`, `\b`, `\f`, `\,`, `\(`, `\)`, `\[`, `\]`, `\{`, `\}`, `\:`, `\@`, and `\uXXXX` (surrogate pairs combine; a lone surrogate is an error). Any other escape is an error.
 
 ## Arrays
 
@@ -209,7 +209,7 @@ ASUN supports block comments wherever optional whitespace is allowed:
 
 Line comments are not part of the format.
 
-Comments must not appear inside quoted strings, plain strings, numbers, booleans, tuples, or array literals. Conformance tests mark comments inside `(...)` and `[...]` as errors.
+Comments are layout, like whitespace: they may appear between any two tokens, including inside tuples and arrays, but never inside a quoted string, plain string, number or keyword. Outside quotes, `/*` always opens a comment, so `(x /* note */)` is the string `x`.
 
 ## Whitespace
 

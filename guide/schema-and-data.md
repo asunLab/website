@@ -102,14 +102,14 @@ An empty slot represents null / missing:
 [1,,3]
 ```
 
-Trailing commas do not create nulls. Use a doubled comma for a final null: `(a,b,,)`.
+A comma is a pure separator: `n` commas make `n + 1` slots, so a final comma adds a null. `(a,b,)` has three values and `(,)` has two nulls. `null` is also a keyword (`"null"` is the string). An array holding a single null is written `[null]`, because `[]` is empty.
 
 ## What ASUN Does Not Do
 
 Current ASUN text does **not** use inline object literals in the data section:
 
 ```asun
-{user@{id@int}}:({id: 1})   // not current ASUN
+{user@{id@int}}:({id: 1})   /* not current ASUN */
 ```
 
 Write key-value collections as entry lists:

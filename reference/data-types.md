@@ -16,7 +16,7 @@ Current ASUN schema names are intentionally small and fixed. The only scalar sch
 | `bool`           | `true`, `false`        | Lowercase only                            |
 | `str` (unquoted) | `Alice Smith`          | Outer whitespace is trimmed               |
 | `str` (quoted)   | `" spaces "`           | Preserves whitespace and supports escapes |
-| null / None      | _(empty slot)_         | Empty between commas                      |
+| null / None      | _(empty slot)_, `null` | Empty slot or the `null` keyword          |
 
 ## Composite Types
 
@@ -61,7 +61,7 @@ An empty slot inside a tuple or array means `null` / `None`:
   (2,    )
 ```
 
-A trailing comma is ignored. Use a doubled comma for a final null, such as `(2,,)`.
+A comma is a pure separator: `n` commas make `n + 1` slots, so a final comma adds a null. `(a,b,)` has three values and `(,)` has two nulls. `null` is also a keyword (`"null"` is the string). An array holding a single null is written `[null]`, because `[]` is empty.
 
 ### Numeric Lexing Notes
 
