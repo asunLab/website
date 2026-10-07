@@ -16,7 +16,7 @@ Current ASUN schema names are intentionally small and fixed. The only scalar sch
 | `bool`           | `true`, `false`        | Lowercase only                            |
 | `str` (unquoted) | `Alice Smith`          | Outer whitespace is trimmed               |
 | `str` (quoted)   | `" spaces "`           | Preserves whitespace; JSON escapes        |
-| null / None      | `_`                    | Decoders also accept `null`               |
+| null / None      | `_`                    | The only null literal                     |
 
 ## Composite Types
 
@@ -63,7 +63,7 @@ Keys are unique; `[]` is the empty map. See [Syntax Reference](/reference/syntax
   (2, _)
 ```
 
-Every position holds a value: blank positions such as `(2, )` or `[1,,3]` are errors. `"_"` is the string `_`. Decoders also accept the keyword `null`, but encoders always write `_`. An array holding a single null is `[_]`.
+Every position holds a value: blank positions such as `(2, )` or `[1,,3]` are errors. `"_"` is the string `_`, and `null` is not a keyword: unquoted, it is the string `"null"`. An array holding a single null is `[_]`.
 
 ### Numeric Lexing Notes
 

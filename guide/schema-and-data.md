@@ -109,7 +109,7 @@ Maps use `key:value` entries:
 [1, _, 3]
 ```
 
-Every position holds a value: blank positions such as `(1, )` or `[1,,3]` and trailing commas are errors. `"_"` is the string `_`; decoders also accept the keyword `null`. An array holding a single null is `[_]`.
+Every position holds a value: blank positions such as `(1, )` or `[1,,3]` and trailing commas are errors. `"_"` is the string `_`, and an unquoted `null` is just the string `"null"`. An array holding a single null is `[_]`.
 
 ## What ASUN Does Not Do
 

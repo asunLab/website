@@ -131,7 +131,7 @@
     },
     "null": {
       "name": "constant.language.null.asun",
-      "match": "(?<![^\\s,(\\[:])(?:_|null)(?=\\s*(?:$|[,\\]\\)]|/\\*))"
+      "match": "(?<![^\\s,(\\[:])_(?=\\s*(?:$|[,\\]\\)]|/\\*))"
     },
     "plain-string": {
       "name": "string.unquoted.asun",

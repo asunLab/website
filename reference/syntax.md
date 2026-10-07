@@ -136,7 +136,7 @@ Null is written `_`:
 [1, _, 3]
 ```
 
-Every position holds a value. A blank position (`(1, )`, `(,)`, `[1,,3]`) and a trailing comma are errors; `()` is a tuple with zero elements, used only by the empty schema `{}`. `"_"` is the string `_`. Decoders also accept the keyword `null`, but encoders always write `_`. An array holding a single null is `[_]`.
+Every position holds a value. A blank position (`(1, )`, `(,)`, `[1,,3]`) and a trailing comma are errors; `()` is a tuple with zero elements, used only by the empty schema `{}`. `"_"` is the string `_`, and `null` is not a keyword: unquoted, it is the string `"null"`. An array holding a single null is `[_]`.
 
 ## Strings
 

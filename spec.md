@@ -143,7 +143,7 @@ Null is written `_`:
 [1, _, 3]
 ```
 
-Every position holds a value: a blank position such as `(1, )`, `(,)` or `[1,,3]` is an error, and so is a trailing comma. `"_"` is the string `_`. Decoders also accept the keyword `null`, but encoders always write `_`. An array holding a single null is `[_]`.
+Every position holds a value: a blank position such as `(1, )`, `(,)` or `[1,,3]` is an error, and so is a trailing comma. `"_"` is the string `_`, and `null` is not a keyword: unquoted, it is the string `"null"`. An array holding a single null is `[_]`.
 
 ## Strings
 
@@ -180,7 +180,7 @@ In schema, `@` is structural syntax. In data, `@` and `:` are ordinary character
 {name@str, email@str, at@str}:(@Alice, alice@example.com, 12:30)
 ```
 
-Keywords (`true`, `false`, `_`, `null`) and type names (`int`, `float`, `str`, `bool`) are case-sensitive: `TRUE` is a string and `@INT` is an error.
+Keywords (`true`, `false`, `_`) and type names (`int`, `float`, `str`, `bool`) are case-sensitive: `TRUE` is a string and `@INT` is an error.
 
 ## Comments
 
