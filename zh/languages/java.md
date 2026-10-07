@@ -20,7 +20,7 @@ JVM 版以 Java 为主，同时在同一个 artifact 中附带 Kotlin helper。
 - 二进制编解码
 - 列表、嵌套类、可空字段、entry-list 键值集合
 
-ASUN 不再提供独立 `map` 类型。键值集合请统一建模为 `List<Entry>`。
+本实现暂不支持 v1.6 的 `[K:V]` Map 字段。键值集合请统一建模为 `List<Entry>`。
 
 ## 核心 API
 

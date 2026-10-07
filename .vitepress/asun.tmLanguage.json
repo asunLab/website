@@ -10,6 +10,7 @@
     { "include": "#string" },
     { "include": "#number" },
     { "include": "#boolean" },
+    { "include": "#null" },
     { "include": "#operators" }
   ],
   "repository": {
@@ -72,6 +73,7 @@
             { "include": "#string" },
             { "include": "#number" },
             { "include": "#boolean" },
+            { "include": "#null" },
             { "include": "#operators" },
             { "include": "#plain-string" }
           ]
@@ -98,6 +100,7 @@
             { "include": "#string" },
             { "include": "#number" },
             { "include": "#boolean" },
+            { "include": "#null" },
             { "include": "#operators" },
             { "include": "#quoted-field-name" },
             { "include": "#type-hint" },
@@ -114,21 +117,25 @@
       "patterns": [
         {
           "name": "constant.character.escape.asun",
-          "match": "\\\\(?:[\\\\\",ntrbf(),\\[\\]{}:@]|u[0-9A-Fa-f]{4})"
+          "match": "\\\\(?:[\\\\\"/bfnrt]|u[0-9A-Fa-f]{4})"
         }
       ]
     },
     "number": {
       "name": "constant.numeric.asun",
-      "match": "-?(?:[0-9]+\\.[0-9]+(?:[eE][+-]?[0-9]+)?|[0-9]+[eE][+-]?[0-9]+|[0-9]+)(?=$|[\\s,\\]\\)])"
+      "match": "(?<![^\\s,(\\[:])-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?(?=$|[\\s,\\]\\)])"
     },
     "boolean": {
       "name": "constant.language.boolean.asun",
       "match": "\\b(true|false)\\b"
     },
+    "null": {
+      "name": "constant.language.null.asun",
+      "match": "(?<![^\\s,(\\[:])(?:_|null)(?=\\s*(?:$|[,\\]\\)]|/\\*))"
+    },
     "plain-string": {
       "name": "string.unquoted.asun",
-      "match": "(?:\\\\(?:[\\\\\",ntrbf(),\\[\\]{}:@]|u[0-9A-Fa-f]{4})|/(?!\\*)|[^\\s,()\\[\\]{}:@\"\\\\/])(?:\\\\(?:[\\\\\",ntrbf(),\\[\\]{}:@]|u[0-9A-Fa-f]{4})|/(?!\\*)|[^,()\\[\\]{}:@\"\\\\/])*"
+      "match": "(?:/(?!\\*)|[^\\s,()\\[\\]{}:@\"\\\\/])(?:/(?!\\*)|[^,()\\[\\]{}:@\"\\\\/])*"
     },
     "operators": {
       "patterns": [

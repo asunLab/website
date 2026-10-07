@@ -10,7 +10,7 @@ C++ 版是 header-only 实现，依靠编译期元数据宏而不是运行时反
 
 - 类型通过 `ASUN_FIELDS(...)` 和 `ASUN_TYPES(...)` 声明 schema 元数据。
 - 文本与二进制解码都依赖目标类型 `T`。
-- ASUN 没有独立 `map` 类型；键值集合请用 entry struct + `std::vector`。
+- 本实现暂不支持 v1.6 的 `[K:V]` Map 字段；键值集合请用 entry struct + `std::vector`。
 
 ## 当前支持
 

@@ -51,19 +51,20 @@ Complex fields use the same `@` as a required structural binding:
 - `@{...}` nested struct
 - `@[type]` array
 - `@[{...}]` array of structs
+- `@[K:V]` map
 
 Examples:
 
 ```asun
 {profile@{id@int, name@str}}
 {tags@[str]}
-{attrs@[{key@str, value@str}]}
+{attrs@[str:str]}
 ```
 
 This means:
 
 - `name` and `name@str` produce the same structural layout
-- `address@{...}` and `tags@[...]` cannot drop `@`, because it binds the field to the nested schema
+- `address@{...}`, `tags@[...]` and `attrs@[str:str]` cannot drop `@`, because it binds the field to the nested schema
 
 ## Field Names
 
@@ -95,14 +96,20 @@ Arrays use square brackets:
 {tags@[str]}:([rust, go, zig])
 ```
 
-An empty slot represents null / missing:
+Maps use `key:value` entries:
 
 ```asun
-{id@int, score@float}:(1, )
-[1,,3]
+{attrs@[str:str]}:([lang:zig, tier:prod])
 ```
 
-A comma is a pure separator: `n` commas make `n + 1` slots, so a final comma adds a null. `(a,b,)` has three values and `(,)` has two nulls. `null` is also a keyword (`"null"` is the string). An array holding a single null is written `[null]`, because `[]` is empty.
+`_` represents null:
+
+```asun
+{id@int, score@float}:(1, _)
+[1, _, 3]
+```
+
+Every position holds a value: blank positions such as `(1, )` or `[1,,3]` and trailing commas are errors. `"_"` is the string `_`; decoders also accept the keyword `null`. An array holding a single null is `[_]`.
 
 ## What ASUN Does Not Do
 
@@ -112,10 +119,17 @@ Current ASUN text does **not** use inline object literals in the data section:
 {user@{id@int}}:({id: 1})   /* not current ASUN */
 ```
 
-Write key-value collections as entry lists:
+Key-value collections are maps declared in the schema, not objects in the data:
 
 ```asun
-{attrs@[{key@str, value@str}]}:([(lang, zig), (tier, prod)])
+{attrs@[str:str]}:([lang:zig, tier:prod])
+```
+
+There are no blank positions and no backslash escapes outside quotes:
+
+```asun
+{a@int, b@str}:(1, )        /* not current ASUN: write (1, _) */
+{a@str}:(x\,y)              /* not current ASUN: write ("x,y") */
 ```
 
 ## Short Grammar Summary
@@ -125,11 +139,14 @@ single   = schema ":" tuple
 slice    = "[" schema "]" ":" rows
 schema   = "{" fields "}"
 field    = name ["@" type]
-type     = "int" | "float" | "str" | "bool" | schema | "[" type "]"
+type     = "int" | "float" | "str" | "bool" | schema
+         | "[" type "]"                    /* array */
+         | "[" [keytype] ":" [type] "]"    /* map   */
 rows     = tuple ("," tuple)*
-tuple    = "(" values ")"
+tuple    = "(" [values] ")"
 values   = value ("," value)*
-value    = scalar | tuple | "[" values "]" | empty
+value    = scalar | "_" | tuple | "[" [values] "]" | "[" entries "]"
+entries  = key ":" value ("," key ":" value)*
 ```
 
 See the full [Syntax Reference](/reference/syntax) for string, escaping, whitespace, and comment rules.

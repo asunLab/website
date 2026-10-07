@@ -48,16 +48,17 @@ For complex fields, the same `@` marker is a required structural binding:
 - `@{...}` nested struct
 - `@[type]` array
 - `@[{...}]` array of structs
+- `@[K:V]` map; `K` is `str`, `int` or omitted, so `@[:]` is an untyped map
 
 Examples:
 
 ```asun
 {profile@{id@int, name@str}}
 {tags@[str]}
-{attrs@[{key@str, value@str}]}
+{attrs@[str:int]}
 ```
 
-`id` and `id@int` are layout-equivalent, but `profile@{...}` and `tags@[...]` must keep `@` so the parser can see the nested structure boundary.
+`id` and `id@int` are layout-equivalent, but `profile@{...}`, `tags@[...]` and `attrs@[str:int]` must keep `@` so the parser can see the nested structure boundary.
 
 ### Field names
 
@@ -115,9 +116,9 @@ Inline object literals are not part of the current format.
 -1.0E+100
 ```
 
-Floats require digits before the decimal point. If a decimal point is present, it must have at least one digit after it. Exponents use `e` or `E` with optional `+`/`-`.
+Numbers follow the JSON number grammar. Floats require digits before the decimal point. If a decimal point is present, it must have at least one digit after it. Exponents use `e` or `E` with optional `+`/`-`. The integer part has no leading zeros.
 
-These are plain strings, not numbers: `.5`, `5.`, `+5`, `1e`, `1e+`.
+These are plain strings, not numbers: `.5`, `5.`, `+5`, `1e`, `1e+`, `007`, `01.5`. Under an `@int` or `@float` hint they are errors.
 
 ### `bool`
 
@@ -128,14 +129,14 @@ false
 
 ### null / optional
 
-An empty slot inside a tuple or array means null / absent:
+Null is written `_`:
 
 ```asun
-{id@int, label@str}:(1, )
-[1,,3]
+{id@int, label@str}:(1, _)
+[1, _, 3]
 ```
 
-A comma is a pure separator: `n` commas make `n + 1` slots, so a final comma adds a null. `(a,b,)` has three values and `(,)` has two nulls. `null` is also a keyword (`"null"` is the string). An array holding a single null is written `[null]`, because `[]` is empty.
+Every position holds a value. A blank position (`(1, )`, `(,)`, `[1,,3]`) and a trailing comma are errors; `()` is a tuple with zero elements, used only by the empty schema `{}`. `"_"` is the string `_`. Decoders also accept the keyword `null`, but encoders always write `_`. An array holding a single null is `[_]`.
 
 ## Strings
 
@@ -153,7 +154,7 @@ Rules:
 - outer whitespace is trimmed
 - raw `, ( ) [ ] { } " \` and control characters are not allowed
 - raw `:`, `@`, `/`, `*`, `<`, and `>` are allowed, but `/*` starts a block comment
-- quote or escape reserved syntax characters
+- there are no escapes outside quotes: quote any value that needs a reserved character
 
 ```asun
 {path@str}:(path/to/file)
@@ -170,7 +171,7 @@ Use quotes when you need to preserve whitespace or include reserved characters:
 "line\nbreak"
 ```
 
-Quoted strings follow JSON: `"`, `\` and control characters (U+0000–U+001F) must be escaped. Supported escapes are `\"`, `\\`, `\/`, `\n`, `\t`, `\r`, `\b`, `\f`, `\,`, `\(`, `\)`, `\[`, `\]`, `\{`, `\}`, `\:`, `\@`, and `\uXXXX` (surrogate pairs combine; a lone surrogate is an error). Any other escape is an error.
+Quoted strings are JSON strings: `"`, `\` and control characters (U+0000–U+001F) must be escaped. Supported escapes are `\"`, `\\`, `\/`, `\n`, `\t`, `\r`, `\b`, `\f`, and `\uXXXX` (surrogate pairs combine; a lone surrogate is an error). Any other escape, such as `\,` or `\(`, is an error. Structural characters need no escape inside quotes.
 
 ## Arrays
 
@@ -187,14 +188,31 @@ Nested arrays are also allowed:
   ([[1, 2], [3, 4]])
 ```
 
-## Entry Lists
+## Maps
 
-Write keyed collections as entry lists:
+A map field is declared as `@[K:V]` and written as `key:value` entries:
 
 ```asun
-[{name@str, attrs@[{key@str, value@int}]}]:
-  (Alice, [(age, 30), (score, 95)])
+[{name@str, attrs@[str:int]}]:
+  (Alice, [age:30, score:95]),
+  (Bob,   [])
 ```
+
+| Schema          | Data                   |
+| --------------- | ---------------------- |
+| `m@[str:int]`   | `[a:1, b:2]`           |
+| `m@[int:str]`   | `[1:one, 2:two]`       |
+| `m@[str:{x,y}]` | `[a:(1,2), b:(3,4)]`   |
+| `m@[str:[int]]` | `[a:[1,2], b:[]]`      |
+| `m@[:]`         | `[a:1, b:x]`           |
+
+Rules:
+
+- a value is a map only when its binding is `@[K:V]`; elsewhere `[a:1]` is an array holding the string `a:1`
+- keys are strings or integers, never `_`, booleans or floats
+- the first `:` ends the key: quote a key that contains `:` (`["12:30":5]`); values may contain `:` (`[start:12:30]`)
+- duplicate keys are an error; `[]` is the empty map
+- a map is never a top-level value
 
 ## Comments
 

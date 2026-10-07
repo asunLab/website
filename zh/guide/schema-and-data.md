@@ -51,19 +51,20 @@ name@type
 - `@{...}` 嵌套结构体
 - `@[type]` 数组
 - `@[{...}]` 对象数组
+- `@[K:V]` Map
 
 例如：
 
 ```asun
 {profile@{id@int, name@str}}
 {tags@[str]}
-{attrs@[{key@str, value@str}]}
+{attrs@[str:str]}
 ```
 
 这意味着：
 
 - `name` 与 `name@str` 的结构布局相同
-- `address@{...}`、`tags@[...]` 这类复杂字段不能去掉 `@`，因为它负责把字段绑定到嵌套 schema
+- `address@{...}`、`tags@[...]`、`attrs@[str:str]` 这类复杂字段不能去掉 `@`，因为它负责把字段绑定到嵌套 schema
 
 ## 字段名
 
@@ -95,14 +96,20 @@ name@type
 {tags@[str]}:([rust, go, zig])
 ```
 
-空槽表示 null / 缺失：
+Map 使用 `key:value` 条目：
 
 ```asun
-{id@int, score@float}:(1, )
-[1,,3]
+{attrs@[str:str]}:([lang:zig, tier:prod])
 ```
 
-逗号是纯分隔符：`n` 个逗号分出 `n + 1` 个槽，所以末尾逗号会多出一个 null。`(a,b,)` 有三个值，`(,)` 是两个 null。`null` 也是关键字（`"null"` 才是字符串）。只含一个 null 的数组写作 `[null]`，因为 `[]` 是空数组。
+`_` 表示 null：
+
+```asun
+{id@int, score@float}:(1, _)
+[1, _, 3]
+```
+
+每个位置都必须有值：`(1, )`、`[1,,3]` 这样的空位和尾逗号都是错误。`"_"` 是字符串 `_`；解码器也接受关键字 `null`。只含一个 null 的数组写作 `[_]`。
 
 ## ASUN 当前不做什么
 
@@ -112,10 +119,17 @@ name@type
 {user@{id@int}}:({id: 1})   /* 不是当前 ASUN */
 ```
 
-键值集合应建模为条目列表：
+键值集合是在 Schema 中声明的 Map，而不是数据区里的对象：
 
 ```asun
-{attrs@[{key@str, value@str}]}:([(lang, zig), (tier, prod)])
+{attrs@[str:str]}:([lang:zig, tier:prod])
+```
+
+没有空位，引号外也没有反斜杠转义：
+
+```asun
+{a@int, b@str}:(1, )        /* 不是当前 ASUN：应写 (1, _) */
+{a@str}:(x\,y)              /* 不是当前 ASUN：应写 ("x,y") */
 ```
 
 ## 语法概要
@@ -125,11 +139,14 @@ single   = schema ":" tuple
 slice    = "[" schema "]" ":" rows
 schema   = "{" fields "}"
 field    = name ["@" type]
-type     = "int" | "float" | "str" | "bool" | schema | "[" type "]"
+type     = "int" | "float" | "str" | "bool" | schema
+         | "[" type "]"                    /* array */
+         | "[" [keytype] ":" [type] "]"    /* map   */
 rows     = tuple ("," tuple)*
-tuple    = "(" values ")"
+tuple    = "(" [values] ")"
 values   = value ("," value)*
-value    = scalar | tuple | "[" values "]" | empty
+value    = scalar | "_" | tuple | "[" [values] "]" | "[" entries "]"
+entries  = key ":" value ("," key ":" value)*
 ```
 
 完整的字符串、转义、空白与注释规则见 [语法参考](/zh/reference/syntax)。

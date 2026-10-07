@@ -15,8 +15,8 @@ Current ASUN schema names are intentionally small and fixed. The only scalar sch
 | `float`          | `3.14`, `-0.5`, `1e10`, `1.5e-3` | Floating-point text form                  |
 | `bool`           | `true`, `false`        | Lowercase only                            |
 | `str` (unquoted) | `Alice Smith`          | Outer whitespace is trimmed               |
-| `str` (quoted)   | `" spaces "`           | Preserves whitespace and supports escapes |
-| null / None      | _(empty slot)_, `null` | Empty slot or the `null` keyword          |
+| `str` (quoted)   | `" spaces "`           | Preserves whitespace; JSON escapes        |
+| null / None      | `_`                    | Decoders also accept `null`               |
 
 ## Composite Types
 
@@ -43,29 +43,31 @@ Arrays can be nested:
   ([[5, 6], [7, 8]])
 ```
 
-### Entry List
+### Map
 
-Keyed collections use an array of entry structs:
+A map is declared as `@[K:V]` (`K` is `str`, `int` or omitted) and written as `key:value` entries:
 
 ```asun
-{attrs@[{key@str, value@int}]}:([(age, 30), (score, 95)])
+{attrs@[str:int]}:([age:30, score:95])
 ```
+
+Keys are unique; `[]` is the empty map. See [Syntax Reference](/reference/syntax#maps) for the full rules.
 
 ### Option / Nullable
 
-An empty slot inside a tuple or array means `null` / `None`:
+`_` means `null` / `None`:
 
 ```asun
 [{id@int, score@float}]:
   (1, 9.5),
-  (2,    )
+  (2, _)
 ```
 
-A comma is a pure separator: `n` commas make `n + 1` slots, so a final comma adds a null. `(a,b,)` has three values and `(,)` has two nulls. `null` is also a keyword (`"null"` is the string). An array holding a single null is written `[null]`, because `[]` is empty.
+Every position holds a value: blank positions such as `(2, )` or `[1,,3]` are errors. `"_"` is the string `_`. Decoders also accept the keyword `null`, but encoders always write `_`. An array holding a single null is `[_]`.
 
 ### Numeric Lexing Notes
 
-Integers are `-?[0-9]+`. Floats must either contain a decimal point with digits on both sides or a valid exponent. The tokens `.5`, `5.`, `+5`, `1e`, and `1e+` are strings.
+Numbers follow the JSON number grammar. Integers are `-?(0|[1-9][0-9]*)`, with no leading zeros. Floats must either contain a decimal point with digits on both sides or a valid exponent. The tokens `.5`, `5.`, `+5`, `1e`, `1e+`, and `007` are strings.
 
 ## Cross-Language Type Mapping
 
@@ -75,8 +77,9 @@ Integers are `-?[0-9]+`. Floats must either contain a decimal point with digits 
 | `float`           | `f64`             | `float64`                    | `float`                        | `double` / `Double`         | `Double`                        | `double`                          | `double`                        | `f64`        | `double`                                     | `double`                        | `number`             | `float`                               |
 | `bool`            | `bool`            | `bool`                       | `bool`                         | `boolean` / `Boolean`       | `Bool`                          | `bool`                            | `bool`                          | `bool`       | `bool`                                       | `bool`                          | `boolean`            | `bool`                                |
 | `str`             | `String` / `&str` | `string`                     | `str`                          | `String`                    | `String`                        | `char*` / buffer field            | `std::string`                   | `[]const u8` | `string`                                     | `String`                        | `string`             | `string`                              |
-| null / empty slot | `Option<T>`       | `nil` / pointer / empty slot | `None`                         | nullable field / empty slot | `nil` / optional                | nullable pointer / empty slot     | `std::optional<T>` / empty slot | `?T`         | nullable reference / nullable value          | `null`                          | `null` / `undefined` | `null`                                |
+| null (`_`)        | `Option<T>`       | `nil` / pointer              | `None`                         | nullable field              | `nil` / optional                | nullable pointer                  | `std::optional<T>`              | `?T`         | nullable reference / nullable value          | `null`                          | `null` / `undefined` | `null`                                |
 | `[T]`             | `Vec<T>`          | `[]T`                        | `list`                         | `List<T>`                   | `[T]`                           | array / repeated rows with schema | `std::vector<T>`                | `[]T`        | `List<T>` / array                            | `List<T>`                       | `T[]`                | indexed array                         |
+| `[K:V]` map       | `HashMap<K,V>` / `BTreeMap<K,V>` | `map[K]V` | `dict` | `Map<K,V>` | `[K: V]` | entry array + schema descriptor | `std::map<K,V>` / `std::unordered_map<K,V>` | `std.StringHashMap(V)` / entry slice | `Dictionary<K,V>` | `Map<K,V>` | `Map` / plain object | associative array |
 | nested struct     | `struct`          | `struct`                     | `dict` / object factory result | class / data class          | `AsunValue.object` / host model | `struct` + schema descriptor      | `struct` + metadata macros      | `struct`     | class / record implementing schema interface | class implementing `AsunSchema` | plain object         | associative array / object-like array |
 
 ### Notes
@@ -84,7 +87,7 @@ Integers are `-?[0-9]+`. Floats must either contain a decimal point with digits 
 - ASUN schema names stay the same in every language: only `int`, `float`, `bool`, `str`.
 - A host language may use a different concrete type name for the same ASUN scalar. For example, Java uses `double` for `float`, and Zig commonly maps `str` to `[]const u8`.
 - JS / TS only has one numeric runtime type, so `int` means “a number that is encoded as an integer”.
-- Keyed collections use entry lists such as `[{key@str,value@str}]`.
+- `[K:V]` maps are new in v1.6. Implementations are adding support language by language; until a language page lists map support, model keyed data as an entry list such as `[{key@str,value@str}]`.
 
 ## Language Support Overview
 

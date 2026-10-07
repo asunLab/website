@@ -51,21 +51,20 @@ For complex fields, the same `@` marker becomes a required structural binding:
 - `@{...}` nested struct
 - `@[type]` array
 - `@[{...}]` array of structs
+- `@[K:V]` map, where `K` is `str`, `int` or omitted
 
 Examples:
 
 ```asun
 {profile@{id@int, name@str}}
 {tags@[str]}
-{attrs@[{key@str, value@str}]}
+{attrs@[str:int]}
 ```
-
-Keyed collections use entry lists such as `[{key@str, value@str}]`.
 
 In short:
 
 - `id` and `id@int` have the same layout, but `@int` adds scalar type clarity
-- `profile@{...}` and `tags@[...]` must keep `@` because it marks the nested structure boundary
+- `profile@{...}`, `tags@[...]` and `attrs@[str:int]` must keep `@` because it marks the nested structure boundary
 
 ## Field Names
 
@@ -97,6 +96,14 @@ Nested struct values are written as nested tuples:
 {user@{id@int, name@str}}:((1, Alice))
 ```
 
+Map values are written as `key:value` entries:
+
+```asun
+{user@str, attrs@[str:int]}:(Alice, [age:30, score:95])
+```
+
+A value is a map only when its binding is `@[K:V]`; everywhere else `:` is an ordinary character. The first `:` ends the key, so a key containing `:` must be quoted (`["12:30":5]`). Duplicate keys are an error, and `[]` is the empty map.
+
 Inline object literals in the data section are not part of the current format.
 
 ## Scalars
@@ -118,7 +125,7 @@ Inline object literals in the data section are not part of the current format.
 1.5e-3
 ```
 
-Tokens such as `.5`, `5.`, `+5`, `1e`, and `1e+` are strings, not numbers.
+Numbers follow the JSON number grammar. Tokens such as `.5`, `5.`, `+5`, `1e`, `1e+`, and `007` (leading zero) are strings, not numbers.
 
 ### `bool`
 
@@ -129,13 +136,14 @@ false
 
 ### null / optional
 
-An empty slot inside a tuple or array means null / absent:
+Null is written `_`:
 
 ```asun
-{id@int, label@str}:(1, )
+{id@int, label@str}:(1, _)
+[1, _, 3]
 ```
 
-A comma is a pure separator: `n` commas make `n + 1` slots, so a final comma adds a null. `(a,b,)` has three values and `(,)` has two nulls. `null` is also a keyword (`"null"` is the string). An array holding a single null is written `[null]`, because `[]` is empty.
+Every position holds a value: a blank position such as `(1, )`, `(,)` or `[1,,3]` is an error, and so is a trailing comma. `"_"` is the string `_`. Decoders also accept the keyword `null`, but encoders always write `_`. An array holding a single null is `[_]`.
 
 ## Strings
 
@@ -147,6 +155,7 @@ Unquoted strings:
 - are trimmed at the outer edges
 - may contain raw `:`, `@`, `/`, `*`, `<`, and `>` (`alice@example.com`, `12:30`, `https://a.com`)
 - must not contain raw `, ( ) [ ] { } " \` or control characters
+- have no escapes: a value that needs any of those characters must be quoted
 - treat `/*` as a block comment opener, not as string content
 
 Quoted strings:
@@ -154,7 +163,7 @@ Quoted strings:
 - preserve whitespace
 - allow reserved characters
 - follow JSON rules: `"`, `\` and control characters must be escaped
-- support escapes such as `\"`, `\\`, `\/`, `\n`, `\t`, `\r`, `\b`, `\f`, structural escapes, and `\uXXXX`
+- support exactly the JSON escapes: `\"`, `\\`, `\/`, `\n`, `\t`, `\r`, `\b`, `\f`, and `\uXXXX`
 
 Examples:
 
@@ -171,7 +180,7 @@ In schema, `@` is structural syntax. In data, `@` and `:` are ordinary character
 {name@str, email@str, at@str}:(@Alice, alice@example.com, 12:30)
 ```
 
-Keywords (`true`, `false`, `null`) and type names (`int`, `float`, `str`, `bool`) are case-sensitive: `TRUE` is a string and `@INT` is an error.
+Keywords (`true`, `false`, `_`, `null`) and type names (`int`, `float`, `str`, `bool`) are case-sensitive: `TRUE` is a string and `@INT` is an error.
 
 ## Comments
 

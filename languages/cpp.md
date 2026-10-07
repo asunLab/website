@@ -10,7 +10,7 @@ The C++ implementation is header-only and builds on compile-time metadata macros
 
 - Types declare schema metadata with `ASUN_FIELDS(...)` and `ASUN_TYPES(...)`.
 - Text and binary decode both use the target type `T`.
-- There is no standalone ASUN `map` type. Use entry structs plus `std::vector`.
+- v1.6 `[K:V]` map fields are not supported by this implementation yet. Use entry structs plus `std::vector`.
 
 ## Current Support
 

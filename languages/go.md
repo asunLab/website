@@ -18,7 +18,7 @@ The Go implementation uses reflection and struct tags to map Go structs and slic
 - `EncodePretty`, `EncodePrettyTyped`
 - `Decode`
 - `EncodeBinary`, `DecodeBinary`
-- Nested structs, slices, optional / empty-slot fields, entry-list modeling for keyed data
+- Nested structs, slices, optional / null (`_`) fields, entry-list modeling for keyed data
 
 ## Example
 

@@ -11,14 +11,14 @@ The C implementation is the lowest-level ASUN runtime in the repository. It uses
 
 - You define an `AsunSchema` explicitly with field metadata.
 - Text and binary encode/decode both use that schema descriptor.
-- There is no native ASUN `map` type. Keyed collections should be modeled as arrays of entry structs.
+- `[K:V]` map fields are not supported by this implementation yet. Model keyed collections as arrays of entry structs.
 
 ## Current Support
 
 - Compact text encode/decode
 - Pretty text encode/decode
 - Binary encode/decode
-- Scalars, arrays, nested structs, struct arrays, optional / empty-slot values
+- Scalars, arrays, nested structs, struct arrays, optional / null (`_`) values
 
 Binary decode is not self-describing. You must pass the schema descriptor.
 

@@ -18,7 +18,7 @@ Go 版通过反射和 struct tag 将 Go 结构体、切片映射到 ASUN 文本�
 - `EncodePretty`、`EncodePrettyTyped`
 - `Decode`
 - `EncodeBinary`、`DecodeBinary`
-- 嵌套结构体、切片、可空 / 空槽字段、entry-list 键值集合
+- 嵌套结构体、切片、可空 / null（`_`）字段、entry-list 键值集合
 
 ## 示例
 

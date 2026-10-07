@@ -20,7 +20,7 @@ The JVM implementation targets Java first and also ships Kotlin helpers in the s
 - Binary encode/decode
 - Lists, nested classes, optional / nullable fields, entry-list modeling for keyed data
 
-There is no standalone ASUN `map` type. Use `List<Entry>` style data instead.
+v1.6 `[K:V]` map fields are not supported by this implementation yet. Use `List<Entry>` style data instead.
 
 ## Core API
 

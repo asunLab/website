@@ -25,7 +25,7 @@ ASUN requires fewer special characters. Most string values are unquoted:
   (Bob,   viewer)
 ```
 
-No quotes around `Alice`, `admin`, `viewer`. No commas inside value strings unless escaped with `\,`. Substantially fewer syntax rules to violate.
+No quotes around `Alice`, `admin`, `viewer`. Values containing commas or brackets are simply quoted (`"a, b"`); there are no backslash escapes outside quotes, and null is just `_`. Substantially fewer syntax rules to violate.
 
 ### 2. Schema as a prompt header
 
@@ -35,7 +35,8 @@ Include the schema once in the system prompt or as a header:
 Respond with ASUN using this schema:
 [{id@int, name@str, sentiment@str, score@float}]
 
-Example@[{id@int, name@str, sentiment@str, score@float}]:
+Example:
+[{id@int, name@str, sentiment@str, score@float}]:
   (1, Product A, positive, 0.92),
   (2, Product B, neutral,  0.51)
 

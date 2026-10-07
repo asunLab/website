@@ -15,8 +15,8 @@
 | `float`           | `3.14`、`-0.5`、`1e10`、`1.5e-3` | 浮点值的文本表示     |
 | `bool`            | `true`, `false`        | 严格小写             |
 | `str`（不带引号） | `Alice Smith`          | 首尾空白会被 trim    |
-| `str`（带引号）   | `" spaces "`           | 保留空白并支持转义   |
-| null / None       | _（空槽）_、`null`     | 空槽或 `null` 关键字 |
+| `str`（带引号）   | `" spaces "`           | 保留空白，JSON 转义  |
+| null / None       | `_`                    | 解码器也接受 `null`  |
 
 ## 复合类型
 
@@ -43,29 +43,31 @@
   ([[5, 6], [7, 8]])
 ```
 
-### 条目列表
+### Map
 
-键值集合建模为条目结构体数组：
+Map 声明为 `@[K:V]`（`K` 为 `str`、`int` 或省略），数据写成 `key:value` 条目：
 
 ```asun
-{attrs@[{key@str, value@int}]}:([(age, 30), (score, 95)])
+{attrs@[str:int]}:([age:30, score:95])
 ```
+
+键不能重复；`[]` 是空 Map。完整规则见[语法参考](/zh/reference/syntax#map)。
 
 ### 可选值 / 可空
 
-元组或数组里的空槽表示 `None` / `null`：
+`_` 表示 `None` / `null`：
 
 ```asun
 [{id@int, score@float}]:
   (1, 9.5),
-  (2,    )
+  (2, _)
 ```
 
-逗号是纯分隔符：`n` 个逗号分出 `n + 1` 个槽，所以末尾逗号会多出一个 null。`(a,b,)` 有三个值，`(,)` 是两个 null。`null` 也是关键字（`"null"` 才是字符串）。只含一个 null 的数组写作 `[null]`，因为 `[]` 是空数组。
+每个位置都必须有值：`(2, )`、`[1,,3]` 这样的空位是错误。`"_"` 是字符串 `_`。解码器也接受关键字 `null`，但编码器一律输出 `_`。只含一个 null 的数组写作 `[_]`。
 
 ### 数字词法说明
 
-整数是 `-?[0-9]+`。浮点数必须包含两侧都有数字的小数点，或合法指数部分。`.5`、`5.`、`+5`、`1e`、`1e+` 是字符串。
+数字遵循 JSON 数字语法。整数是 `-?(0|[1-9][0-9]*)`，不能有前导零。浮点数必须包含两侧都有数字的小数点，或合法指数部分。`.5`、`5.`、`+5`、`1e`、`1e+`、`007` 是字符串。
 
 ## 跨语言类型映射
 
@@ -75,8 +77,9 @@
 | `float`     | `f64`             | `float64`           | `float`               | `double` / `Double`   | `Double`                      | `double`                 | `double`                  | `f64`        | `double`                     | `double`               | `number`             | `float`               |
 | `bool`      | `bool`            | `bool`              | `bool`                | `boolean` / `Boolean` | `Bool`                        | `bool`                   | `bool`                    | `bool`       | `bool`                       | `bool`                 | `boolean`            | `bool`                |
 | `str`       | `String` / `&str` | `string`            | `str`                 | `String`              | `String`                      | `char*` / 缓冲区字段     | `std::string`             | `[]const u8` | `string`                     | `String`               | `string`             | `string`              |
-| null / 空槽 | `Option<T>`       | `nil` / 指针 / 空槽 | `None`                | 可空字段 / 空槽       | `nil` / optional              | 可空指针 / 空槽          | `std::optional<T>` / 空槽 | `?T`         | 可空引用 / 可空值类型        | `null`                 | `null` / `undefined` | `null`                |
+| null（`_`） | `Option<T>`       | `nil` / 指针        | `None`                | 可空字段              | `nil` / optional              | 可空指针                 | `std::optional<T>`        | `?T`         | 可空引用 / 可空值类型        | `null`                 | `null` / `undefined` | `null`                |
 | `[T]`       | `Vec<T>`          | `[]T`               | `list`                | `List<T>`             | `[T]`                         | 数组 / 重复行            | `std::vector<T>`          | `[]T`        | `List<T>` / 数组             | `List<T>`              | `T[]`                | 索引数组              |
+| `[K:V]` Map | `HashMap<K,V>` / `BTreeMap<K,V>` | `map[K]V` | `dict` | `Map<K,V>` | `[K: V]` | 条目数组 + schema 描述符 | `std::map<K,V>` / `std::unordered_map<K,V>` | `std.StringHashMap(V)` / 条目切片 | `Dictionary<K,V>` | `Map<K,V>` | `Map` / 普通对象 | 关联数组 |
 | 嵌套结构体  | `struct`          | `struct`            | `dict` / 工厂返回对象 | class / data class    | `AsunValue.object` / 宿主模型 | `struct` + schema 描述符 | `struct` + 元数据宏       | `struct`     | class / record + schema 接口 | 实现 `AsunSchema` 的类 | 普通对象             | 关联数组 / 对象式数组 |
 
 ### 说明
@@ -84,7 +87,7 @@
 - 所有语言共享同一套 ASUN schema 名称，只有 `int`、`float`、`bool`、`str`。
 - 宿主语言的具体类型名可以不同，但对应的 ASUN 语义相同。例如 Java 用 `double` 承载 `float`，Zig 常用 `[]const u8` 承载 `str`。
 - JS / TS 运行时只有一种 `number`，因此这里的 `int` 表示“以整数形式编码的 number”。
-- 键值集合统一写成 entry-list，例如 `[{key@str,value@str}]`。
+- `[K:V]` Map 是 v1.6 新增的，各语言实现正在逐个支持；在对应语言页面列出 Map 支持之前，键值集合请先用条目列表表示，例如 `[{key@str,value@str}]`。
 
 ## 语言支持总览
 
